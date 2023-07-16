@@ -43,7 +43,7 @@ class OrderAdmin(admin.ModelAdmin):
 
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
-    list_display = ("id", "order", "product", "needed_quantity", "delivered_quantity", "is_checked")
+    list_display = ("id", "order", "product", "needed_quantity", "delivered_quantity", "price", "is_checked")
     list_display_links = ("id",)
     search_fields = ("id", "order__id", "product__name")
     list_filter = ("product", "order")
