@@ -7,9 +7,9 @@ from .generator import BothHttpAndHttpsSchemaGenerator
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="YBKY API",
+        title="HEAT Monitoring API",
         default_version="v1",
-        description="Test project for YBKY 2023",
+        description="HEAT Monitoring API",
         terms_of_service="https://www.google.com/policies/terms/",
         contact=openapi.Contact(email="muhandis.asadbek@gmail.com"),
         license=openapi.License(name="BSD License"),

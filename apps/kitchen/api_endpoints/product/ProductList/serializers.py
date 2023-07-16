@@ -4,7 +4,7 @@ from apps.kitchen.models import Product
 from apps.kitchen.serializers import ProductUnitSerializer
 
 
-class ProductListSerializer(serializers.Serializer):
+class ProductListSerializer(serializers.ModelSerializer):
     unit = ProductUnitSerializer()
 
     class Meta:
