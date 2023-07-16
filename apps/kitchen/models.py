@@ -58,8 +58,10 @@ class OrderItem(TimeStampedModel):
         to="kitchen.Product", verbose_name=_("Product"), related_name="orders", on_delete=models.PROTECT
     )
     needed_quantity = models.DecimalField(verbose_name=_("Unit quantity"), max_digits=10, decimal_places=2)
-    delivered_quantity = models.DecimalField(verbose_name=_("Delivered quantity"), max_digits=10, decimal_places=2)
-    price = models.DecimalField(verbose_name=_("Price"), max_digits=10, decimal_places=2)
+    delivered_quantity = models.DecimalField(
+        verbose_name=_("Delivered quantity"), max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    price = models.DecimalField(verbose_name=_("Price"), max_digits=10, decimal_places=2, null=True, blank=True)
     is_checked = models.BooleanField(verbose_name=_("Is checked"), default=False)
     checked_by = models.ForeignKey(
         to="users.User",
