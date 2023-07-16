@@ -29,6 +29,22 @@ class Order(TimeStampedModel):
     status = models.CharField(
         verbose_name=_("Status"), max_length=15, choices=OrderStatus.choices, default=OrderStatus.NEW
     )
+    ordered_by = models.ForeignKey(
+        to="users.User",
+        verbose_name=_("Ordered by"),
+        related_name="created_orders",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+    delivered_by = models.ForeignKey(
+        to="users.User",
+        verbose_name=_("Delivered by"),
+        related_name="delivered_orders",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
 
     def __str__(self):
         return f"Order #{self.id} - {self.status}"
@@ -45,6 +61,14 @@ class OrderItem(TimeStampedModel):
     delivered_quantity = models.DecimalField(verbose_name=_("Delivered quantity"), max_digits=10, decimal_places=2)
     price = models.DecimalField(verbose_name=_("Price"), max_digits=10, decimal_places=2)
     is_checked = models.BooleanField(verbose_name=_("Is checked"), default=False)
+    checked_by = models.ForeignKey(
+        to="users.User",
+        verbose_name=_("Checked by"),
+        related_name="checked_orders",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
 
     def __str__(self):
         return f"Order #{self.order.id} - {self.product.name}"
