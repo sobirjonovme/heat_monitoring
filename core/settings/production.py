@@ -22,6 +22,9 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1",
     "https://127.0.0.1",
     "https://pythonanywhere.com",
+    "http://heatmonitoring.pythonanywhere.com",
+    "https://heatmonitoring.pythonanywhere.com",
+
 ]
 
 
