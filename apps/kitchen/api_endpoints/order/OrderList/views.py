@@ -4,7 +4,6 @@ from rest_framework.permissions import IsAuthenticated
 
 from apps.kitchen.choices import OrderStatus
 from apps.kitchen.models import Order
-from apps.users.models import UserRoles
 
 from .serializers import OrderListSerializer
 
@@ -14,15 +13,7 @@ class OrderListAPIView(ListAPIView):
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        user = self.request.user
-        if user.role == UserRoles.PROVIDER:
-            queryset = user.delivered_orders.all()
-
-        if user.role == UserRoles.COOK:
-            queryset = user.created_orders.all()
-
-        if user.role == UserRoles.ADMIN:
-            queryset = Order.objects.all()
+        queryset = Order.objects.all()
 
         # if object status CHECKED, then annotate total_money
         # in other cases, annotate total_money = 0

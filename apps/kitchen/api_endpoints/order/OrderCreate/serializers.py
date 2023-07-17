@@ -1,7 +1,5 @@
-from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
-from apps.kitchen.choices import OrderStatus
 from apps.kitchen.models import Order, OrderItem
 
 
@@ -30,14 +28,6 @@ class OrderCreateSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
-        # get user from validated_data
-        user = validated_data.get("ordered_by")
-        if Order.objects.filter(ordered_by=user, status=OrderStatus.NEW).exists():
-            raise serializers.ValidationError(
-                detail={"order": _("You already have an order in progress.")},
-                code="already_in_progress",
-            )
-
         items_data = validated_data.pop("items")
         order = Order.objects.create(**validated_data)
         for item_data in items_data:
