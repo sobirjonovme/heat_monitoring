@@ -1,18 +1,18 @@
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
 
 from apps.kitchen.choices import OrderStatus
+from apps.kitchen.permissions import IsProvider
 
 from .serializers import OrderDeliverSerializer
 
 
 class OrderDeliverAPIView(APIView):
     serializer_class = OrderDeliverSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsProvider,)
 
     @swagger_auto_schema(request_body=serializer_class)
     def post(self, request, *args, **kwargs):

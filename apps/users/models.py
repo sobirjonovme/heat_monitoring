@@ -16,3 +16,12 @@ class User(AbstractUser):
         choices=UserRoles.choices,
         default=UserRoles.ADMIN,
     )
+
+    def is_admin(self):
+        return self.role == UserRoles.ADMIN
+
+    def is_cook(self):
+        return self.role == UserRoles.COOK
+
+    def is_provider(self):
+        return self.role == UserRoles.PROVIDER
