@@ -7,11 +7,11 @@ from apps.kitchen.serializers import OrderDetailSerializer
 from apps.users.models import UserRoles
 
 
-class ActiveOrderDetailAPIView(ListAPIView):
+class ActiveOrderListAPIView(ListAPIView):
     serializer_class = OrderDetailSerializer
     permission_classes = (IsAuthenticated,)
 
-    def get_object(self):
+    def get_queryset(self):
         user = self.request.user
         if user.role == UserRoles.PROVIDER:
             return user.delivered_orders.filter(status=OrderStatus.NEW)
@@ -23,4 +23,4 @@ class ActiveOrderDetailAPIView(ListAPIView):
             return Order.objects.exclude(status=OrderStatus.CHECKED)
 
 
-__all__ = ["ActiveOrderDetailAPIView"]
+__all__ = ["ActiveOrderListAPIView"]
