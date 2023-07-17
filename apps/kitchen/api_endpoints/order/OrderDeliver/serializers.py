@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from apps.kitchen.choices import OrderStatus
 from apps.kitchen.models import Order, OrderItem
 
 
@@ -17,9 +18,13 @@ class OrderDeliverSerializer(serializers.Serializer):
         model = Order
         fields = (
             "order_id",
-            "status",
             "items",
         )
-        extra_kwargs = {
-            "status": {"read_only": True},
-        }
+
+    def validate_order(self, value):
+        if value.status != OrderStatus.NEW:
+            raise serializers.ValidationError(
+                detail={"order": "Order already delivered."},
+                code="invalid",
+            )
+        return value
