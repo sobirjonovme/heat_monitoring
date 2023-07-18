@@ -14,10 +14,10 @@ class ActiveOrderListAPIView(ListAPIView):
     def get_queryset(self):
         user = self.request.user
         if user.role == UserRoles.PROVIDER:
-            return user.delivered_orders.filter(status=OrderStatus.NEW)
+            return Order.objects.filter(status=OrderStatus.NEW)
 
         if user.role == UserRoles.COOK:
-            return user.created_orders.exclude(status=OrderStatus.CHECKED)
+            return Order.objects.exclude(status=OrderStatus.CHECKED)
 
         if user.role == UserRoles.ADMIN:
             return Order.objects.exclude(status=OrderStatus.CHECKED)
