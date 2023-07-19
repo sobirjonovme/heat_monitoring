@@ -13,7 +13,7 @@ class OrderListAPIView(ListAPIView):
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        queryset = Order.objects.all()
+        queryset = Order.objects.order_by("-created_at")
 
         # if object status CHECKED, then annotate total_money
         # in other cases, annotate total_money = 0
