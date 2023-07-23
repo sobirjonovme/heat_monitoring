@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 
 from apps.kitchen.choices import OrderStatus
 from apps.kitchen.models import Order, OrderItem, Product
+from apps.kitchen.serializers import OrderDetailProductSerializer
 
 from .serializers import DateRangeSerializer
 
@@ -29,14 +30,16 @@ class StatisticsAPIView(APIView):
         data = orders.aggregate(
             total_money=Sum("items__price"),
         )
-
+        data["items"] = []
         for product in Product.objects.all():
             product_items = OrderItem.objects.filter(product=product, order__in=orders)
             if product_items.exists():
-                data[product.name] = product_items.aggregate(
+                product_data = product_items.aggregate(
                     total_delivered_quantity=Sum("delivered_quantity"),
                     total_price=Sum("price"),
                 )
+                product_data["product"] = OrderDetailProductSerializer(product).data
+                data["items"].append(product_data)
 
         return Response(data, status=status.HTTP_200_OK)
 
