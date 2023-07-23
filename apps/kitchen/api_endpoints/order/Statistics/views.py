@@ -31,10 +31,12 @@ class StatisticsAPIView(APIView):
         )
 
         for product in Product.objects.all():
-            data[product.name] = OrderItem.objects.filter(product=product, order__in=orders).aggregate(
-                total_delivered_quantity=Sum("delivered_quantity"),
-                total_price=Sum("price"),
-            )
+            product_items = OrderItem.objects.filter(product=product, order__in=orders)
+            if product_items.exists():
+                data[product.name] = product_items.aggregate(
+                    total_delivered_quantity=Sum("delivered_quantity"),
+                    total_price=Sum("price"),
+                )
 
         return Response(data, status=status.HTTP_200_OK)
 
