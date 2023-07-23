@@ -1,4 +1,5 @@
 from django.db.models import Case, DecimalField, Sum, Value, When
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 
@@ -11,6 +12,11 @@ from .serializers import OrderListSerializer
 class OrderListAPIView(ListAPIView):
     serializer_class = OrderListSerializer
     permission_classes = (IsAuthenticated,)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = {
+        "created_at": ["gte", "lte"],
+        "status": ["exact"],
+    }
 
     def get_queryset(self):
         queryset = Order.objects.order_by("-created_at")
