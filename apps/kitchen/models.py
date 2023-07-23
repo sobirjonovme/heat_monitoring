@@ -55,9 +55,9 @@ class OrderItem(TimeStampedModel):
         to="kitchen.Order", verbose_name=_("Order"), related_name="items", on_delete=models.CASCADE
     )
     product = models.ForeignKey(
-        to="kitchen.Product", verbose_name=_("Product"), related_name="orders", on_delete=models.PROTECT
+        to="kitchen.Product", verbose_name=_("Product"), related_name="order_items", on_delete=models.PROTECT
     )
-    needed_quantity = models.DecimalField(verbose_name=_("Unit quantity"), max_digits=10, decimal_places=2)
+    needed_quantity = models.DecimalField(verbose_name=_("Needed quantity"), max_digits=10, decimal_places=2)
     delivered_quantity = models.DecimalField(
         verbose_name=_("Delivered quantity"), max_digits=10, decimal_places=2, null=True, blank=True
     )

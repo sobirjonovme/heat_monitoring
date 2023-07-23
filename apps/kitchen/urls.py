@@ -3,7 +3,7 @@ from django.urls import path
 from .api_endpoints import (ActiveOrderListAPIView, OrderCheckAPIView,
                             OrderCreateAPIView, OrderDeliverAPIView,
                             OrderDetailAPIView, OrderListAPIView,
-                            ProductListAPIView)
+                            ProductListAPIView, StatisticsAPIView)
 
 app_name = "kitchen"
 
@@ -13,6 +13,7 @@ urlpatterns = [
     path("order/list/active/", ActiveOrderListAPIView.as_view(), name="order-list-active"),
     path("order/list/", OrderListAPIView.as_view(), name="order-list"),
     path("order/<int:pk>/detail/", OrderDetailAPIView.as_view(), name="order-detail"),
+    path("order/statistics/", StatisticsAPIView.as_view(), name="order-statistics"),
     # order actions
     path("order/create/", OrderCreateAPIView.as_view(), name="order-create"),
     path("order/deliver/", OrderDeliverAPIView.as_view(), name="order-deliver"),
