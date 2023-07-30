@@ -25,10 +25,13 @@ class DailyReport(TimeStampedModel):
     sold_eggs = models.PositiveIntegerField(verbose_name=_("sold eggs"), default=0)
     dead_chickens = models.PositiveIntegerField(verbose_name=_("dead chickens"), default=0)
     date = models.DateField(verbose_name=_("date"), default=timezone.now)
+    reported_by = models.ForeignKey(
+        verbose_name=_("Reported by"), to="users.User", on_delete=models.SET_NULL, null=True, blank=True
+    )
 
     class Meta:
-        verbose_name = "daily report"
-        verbose_name_plural = "daily reports"
+        verbose_name = _("daily report")
+        verbose_name_plural = _("daily reports")
 
     def __str__(self):
         return f"{self.id} - {self.date}"

@@ -14,7 +14,5 @@ class FarmResourceAdmin(SingletonModelAdmin):
 class DailyReportAdmin(admin.ModelAdmin):
     list_display = ("id", "date", "laid_eggs", "broken_eggs", "sold_eggs", "dead_chickens")
     list_display_links = ("id", "date")
-    search_fields = (
-        "id",
-        "date",
-    )
+    search_fields = ("id", "date")
+    readonly_fields = ("reported_by", "created_at", "updated_at")
