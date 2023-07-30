@@ -24,8 +24,8 @@ class DailyReport(TimeStampedModel):
     broken_eggs = models.PositiveIntegerField(verbose_name=_("broken eggs"), default=0)
     sold_eggs = models.PositiveIntegerField(verbose_name=_("sold eggs"), default=0)
     dead_chickens = models.PositiveIntegerField(verbose_name=_("dead chickens"), default=0)
-    total_remaining_eggs = models.PositiveIntegerField(verbose_name=_("total remaining eggs"), default=0)
-    productivity = models.FloatField(verbose_name=_("productivity"), default=0)
+    total_remaining_eggs = models.PositiveIntegerField(verbose_name=_("total remaining eggs"), null=True, blank=True)
+    productivity = models.FloatField(verbose_name=_("productivity"), null=True, blank=True)
     date = models.DateField(verbose_name=_("date"), default=timezone.now)
     reported_by = models.ForeignKey(
         verbose_name=_("Reported by"), to="users.User", on_delete=models.SET_NULL, null=True, blank=True
