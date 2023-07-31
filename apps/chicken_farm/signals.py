@@ -20,7 +20,7 @@ def daily_report_post_signal(sender, instance, created, **kwargs):
         instance.total_remaining_eggs = farm_resource.eggs_count
         print(instance.productivity)
         if instance.productivity is None:
-            instance.productivity = instance.laid_eggs / farm_resource.chickens_count
+            instance.productivity = instance.laid_eggs / farm_resource.chickens_count * 100
         instance.save()
 
 
