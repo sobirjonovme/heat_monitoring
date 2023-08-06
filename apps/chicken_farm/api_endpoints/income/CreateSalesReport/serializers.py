@@ -18,6 +18,7 @@ class CreateSalesReportSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         farm_resource = FarmResource.get_solo()
+        print(data)
 
         # Check if there is enough eggs to sell
         if farm_resource.eggs_count < data["sold_eggs"]:
