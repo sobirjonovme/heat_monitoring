@@ -55,8 +55,16 @@ class FarmSalesReport(TimeStampedModel):
         verbose_name = _("sales report")
         verbose_name_plural = _("sales reports")
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(args, kwargs)
+        self.id = None
+
     def __str__(self):
         return f"#{self.id} - {self.sold_at}"
+
+    @property
+    def total_payment(self):
+        return self.cash_payment + self.card_payment + self.debt_payment
 
 
 class FarmIncomeDebtPayback(TimeStampedModel):
