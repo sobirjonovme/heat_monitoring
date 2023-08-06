@@ -37,3 +37,7 @@ class FarmExpense(TimeStampedModel):
 
     def __str__(self):
         return f"#{self.id} - {self.type}"
+
+    @property
+    def total_payment(self):
+        return self.card_payment + self.cash_payment + self.debt_payment
