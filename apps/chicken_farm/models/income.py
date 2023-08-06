@@ -3,6 +3,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from solo.models import SingletonModel
 
+from apps.common.choices import DebtPaybackMethod
 from apps.common.models import TimeStampedModel
 
 
@@ -42,7 +43,7 @@ class FarmDailyReport(TimeStampedModel):
 class FarmSalesReport(TimeStampedModel):
     sold_eggs = models.PositiveIntegerField(verbose_name=_("sold eggs"), default=0, help_text=_("sold eggs in boxes"))
     price_per_box = models.PositiveIntegerField(verbose_name=_("price per box"), default=0)
-    comment = models.TextField(verbose_name=_("comments"), null=True, blank=True)
+    comment = models.TextField(verbose_name=_("comment"), null=True, blank=True)
     card_payment = models.DecimalField(verbose_name=_("Card money"), max_digits=10, decimal_places=2, default=0)
     cash_payment = models.DecimalField(verbose_name=_("Cash money"), max_digits=10, decimal_places=2, default=0)
     debt_payment = models.DecimalField(verbose_name=_("Debt money"), max_digits=10, decimal_places=2, default=0)
@@ -62,6 +63,14 @@ class FarmSalesReport(TimeStampedModel):
     def total_payment(self):
         return self.cash_payment + self.card_payment + self.debt_payment
 
+    @property
+    def money_difference(self):
+        # if the difference is less than 1000, then it's ok
+        difference = self.total_payment - (self.sold_eggs * self.price_per_box)
+        if abs(difference) < 1_000:
+            return 0
+        return difference
+
 
 class FarmIncomeDebtPayback(TimeStampedModel):
     sales_report = models.ForeignKey(
@@ -70,8 +79,10 @@ class FarmIncomeDebtPayback(TimeStampedModel):
         on_delete=models.CASCADE,
         related_name="debt_paybacks",
     )
-    card_payment = models.DecimalField(verbose_name=_("Card money"), max_digits=10, decimal_places=2, default=0)
-    cash_payment = models.DecimalField(verbose_name=_("Cash money"), max_digits=10, decimal_places=2, default=0)
+    amount = models.DecimalField(verbose_name=_("Amount"), max_digits=10, decimal_places=2, default=0)
+    payment_method = models.CharField(
+        verbose_name=_("Payment method"), max_length=15, choices=DebtPaybackMethod.choices
+    )
     paid_at = models.DateTimeField(verbose_name=_("paid at"), default=timezone.now)
     reported_by = models.ForeignKey(
         verbose_name=_("Reported by"), to="users.User", on_delete=models.SET_NULL, null=True, blank=True
