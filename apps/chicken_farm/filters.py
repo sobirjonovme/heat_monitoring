@@ -1,6 +1,6 @@
 from django_filters import rest_framework as filters
 
-from apps.chicken_farm.models import DailyReport
+from apps.chicken_farm.models import FarmDailyReport
 
 
 class DailyReportFilter(filters.FilterSet):
@@ -8,5 +8,5 @@ class DailyReportFilter(filters.FilterSet):
     to_date = filters.DateFilter(field_name="date", lookup_expr="lte")
 
     class Meta:
-        model = DailyReport
+        model = FarmDailyReport
         fields = ("from_date", "to_date")

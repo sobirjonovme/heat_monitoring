@@ -59,6 +59,7 @@ THIRD_PARTY_APPS = [
     "corsheaders",
     "django_filters",
     "rest_framework_simplejwt",
+    "sorl.thumbnail",
 ]
 
 REST_FRAMEWORK = {

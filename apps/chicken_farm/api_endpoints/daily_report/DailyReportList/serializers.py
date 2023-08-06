@@ -1,11 +1,11 @@
 from rest_framework import serializers
 
-from apps.chicken_farm.models import DailyReport
+from apps.chicken_farm.models import FarmDailyReport
 
 
 class DailyReportListSerializer(serializers.ModelSerializer):
     class Meta:
-        model = DailyReport
+        model = FarmDailyReport
         fields = (
             "laid_eggs",
             "broken_eggs",

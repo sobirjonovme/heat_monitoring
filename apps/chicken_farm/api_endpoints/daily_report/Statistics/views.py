@@ -5,12 +5,12 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
 from apps.chicken_farm.filters import DailyReportFilter
-from apps.chicken_farm.models import DailyReport, FarmResource
+from apps.chicken_farm.models import FarmDailyReport, FarmResource
 from apps.chicken_farm.permissions import IsFarmCounterOrAdmin
 
 
 class FarmStatisticsAPIView(GenericAPIView):
-    queryset = DailyReport.objects.all()
+    queryset = FarmDailyReport.objects.all()
     permission_classes = (IsFarmCounterOrAdmin,)
 
     filter_backends = (DjangoFilterBackend,)

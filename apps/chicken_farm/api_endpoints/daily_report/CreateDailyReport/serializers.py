@@ -1,13 +1,13 @@
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
-from apps.chicken_farm.models import DailyReport, FarmResource
+from apps.chicken_farm.models import FarmDailyReport, FarmResource
 
 
 class CreateDailyReportSerializer(serializers.ModelSerializer):
     class Meta:
-        model = DailyReport
-        fields = ("laid_eggs", "broken_eggs", "sold_eggs", "dead_chickens")
+        model = FarmDailyReport
+        fields = ("laid_eggs", "broken_eggs", "dead_chickens")
 
     def validate(self, data):
         farm_resource = FarmResource.get_solo()
