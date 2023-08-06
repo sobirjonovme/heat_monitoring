@@ -1,1 +1,1 @@
-from .daily_report import *  # noqa
+from .income import *  # noqa

@@ -20,7 +20,7 @@ class CreateDailyReportAPIView(CreateAPIView):
 
         # check if the report has not already been submitted today
         if FarmDailyReport.objects.filter(date=today).exists():
-            raise ValidationError(code="already_submitted", detail=_("You have already submitted a report for today."))
+            raise ValidationError(code="already_submitted", detail=_("Report has already been submitted today"))
 
         return super().post(request, *args, **kwargs)
 

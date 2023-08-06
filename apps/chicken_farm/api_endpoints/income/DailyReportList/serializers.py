@@ -7,11 +7,12 @@ class DailyReportListSerializer(serializers.ModelSerializer):
     class Meta:
         model = FarmDailyReport
         fields = (
+            "id",
+            "date",
             "laid_eggs",
             "broken_eggs",
-            "sold_eggs",
             "dead_chickens",
             "total_remaining_eggs",
             "productivity",
-            "date",
+            "remaining_chickens",
         )

@@ -18,16 +18,10 @@ class CreateDailyReportSerializer(serializers.ModelSerializer):
                 code="invalid", detail={"broken_eggs": _("Broken eggs can't be more than laid eggs")}
             )
 
-        # check that no chickens died than the available chickens
+        # check that no more chickens died than the available chickens
         if data["dead_chickens"] > farm_resource.chickens_count:
             raise serializers.ValidationError(
                 code="invalid", detail={"dead_chickens": _("Dead chickens can't be more than available chickens")}
-            )
-
-        # check that no eggs sold than the total available eggs
-        if data["sold_eggs"] > farm_resource.eggs_count + data["laid_eggs"]:
-            raise serializers.ValidationError(
-                code="invalid", detail={"sold_eggs": _("Sold eggs can't be more than total available eggs")}
             )
 
         return data
