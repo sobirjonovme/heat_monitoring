@@ -21,6 +21,15 @@ class CreateDebtPaybackSerializer(serializers.ModelSerializer):
                     code="invalid", detail={"amount": _("Amount is more than sales debt")}
                 )
 
+        # if type is outgoings
+        elif data["type"] == FarmDebtPaybackType.OUTGOINGS:
+            data["sales_report"] = None
+            # check if amount is NOT more than expense debt
+            if data["amount"] - data["expense"].debt_payment > 0:
+                raise serializers.ValidationError(
+                    code="invalid", detail={"amount": _("Amount is more than expense debt")}
+                )
+
         return data
 
     def create(self, validated_data):
@@ -36,5 +45,18 @@ class CreateDebtPaybackSerializer(serializers.ModelSerializer):
             elif validated_data["payment_method"] == DebtPaybackMethod.CASH:
                 sales_report.cash_payment += validated_data["amount"]
             sales_report.save()
+
+        # if type is outgoings
+        elif validated_data["type"] == FarmDebtPaybackType.OUTGOINGS:
+            # update expense
+            # Reduce debt by amount
+            expense = validated_data["expense"]
+            expense.debt_payment -= validated_data["amount"]
+            # increase the amount of money paid
+            if validated_data["payment_method"] == DebtPaybackMethod.CARD:
+                expense.card_payment += validated_data["amount"]
+            elif validated_data["payment_method"] == DebtPaybackMethod.CASH:
+                expense.cash_payment += validated_data["amount"]
+            expense.save()
 
         return super().create(validated_data)
