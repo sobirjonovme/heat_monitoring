@@ -13,7 +13,7 @@ urlpatterns = [
     path("order/list/active/", ActiveOrderListAPIView.as_view(), name="order-list-active"),
     path("order/list/", OrderListAPIView.as_view(), name="order-list"),
     path("order/<int:pk>/detail/", OrderDetailAPIView.as_view(), name="order-detail"),
-    path("order/statistics/", StatisticsAPIView.as_view(), name="order-statistics"),
+    path("order/common/", StatisticsAPIView.as_view(), name="order-common"),
     # order actions
     path("order/create/", OrderCreateAPIView.as_view(), name="order-create"),
     path("order/deliver/", OrderDeliverAPIView.as_view(), name="order-deliver"),

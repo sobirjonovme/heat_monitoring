@@ -3,7 +3,6 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from solo.models import SingletonModel
 
-from apps.common.choices import DebtPaybackMethod
 from apps.common.models import TimeStampedModel
 
 
@@ -70,27 +69,3 @@ class FarmSalesReport(TimeStampedModel):
         if abs(difference) < 1_000:
             return 0
         return difference
-
-
-class FarmIncomeDebtPayback(TimeStampedModel):
-    sales_report = models.ForeignKey(
-        verbose_name=_("Sales report"),
-        to="chicken_farm.FarmSalesReport",
-        on_delete=models.CASCADE,
-        related_name="debt_paybacks",
-    )
-    amount = models.DecimalField(verbose_name=_("Amount"), max_digits=10, decimal_places=2, default=0)
-    payment_method = models.CharField(
-        verbose_name=_("Payment method"), max_length=15, choices=DebtPaybackMethod.choices
-    )
-    paid_at = models.DateTimeField(verbose_name=_("paid at"), default=timezone.now)
-    reported_by = models.ForeignKey(
-        verbose_name=_("Reported by"), to="users.User", on_delete=models.SET_NULL, null=True, blank=True
-    )
-
-    class Meta:
-        verbose_name = _("income debt payback")
-        verbose_name_plural = _("income debt paybacks")
-
-    def __str__(self):
-        return f"#{self.id} - {self.paid_at}"

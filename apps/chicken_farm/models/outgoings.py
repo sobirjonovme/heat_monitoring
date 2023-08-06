@@ -36,15 +36,3 @@ class FarmExpense(TimeStampedModel):
 
     def __str__(self):
         return f"#{self.id} - {self.type}"
-
-
-class FarmOutgoingsDebtPayback(TimeStampedModel):
-    expense = models.ForeignKey(
-        verbose_name=_("expense"), to="chicken_farm.FarmExpense", on_delete=models.CASCADE, related_name="debt_paybacks"
-    )
-    card_payment = models.DecimalField(verbose_name=_("Card money"), max_digits=10, decimal_places=2, default=0)
-    cash_payment = models.DecimalField(verbose_name=_("Cash money"), max_digits=10, decimal_places=2, default=0)
-    paid_at = models.DateTimeField(verbose_name=_("paid at"), default=timezone.now)
-    reported_by = models.ForeignKey(
-        verbose_name=_("Reported by"), to="users.User", on_delete=models.SET_NULL, null=True, blank=True
-    )
