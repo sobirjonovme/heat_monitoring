@@ -1,9 +1,9 @@
 from django_filters import rest_framework as filters
 from rest_framework.generics import ListAPIView
 
+from apps.chicken_farm.filters import FarmExpenseFilter
 from apps.chicken_farm.models import FarmExpense
 
-from .filters import FarmExpenseFilter
 from .serializers import FarmExpenseListSerializer
 
 
