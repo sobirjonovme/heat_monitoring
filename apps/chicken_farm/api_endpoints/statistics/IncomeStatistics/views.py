@@ -9,7 +9,7 @@ from apps.chicken_farm.models import FarmDailyReport, FarmResource
 from apps.chicken_farm.permissions import IsFarmCounterOrAdmin
 
 
-class FarmStatisticsAPIView(GenericAPIView):
+class IncomeStatisticsAPIView(GenericAPIView):
     queryset = FarmDailyReport.objects.all()
     permission_classes = (IsFarmCounterOrAdmin,)
 
@@ -22,7 +22,6 @@ class FarmStatisticsAPIView(GenericAPIView):
         statistics = queryset.aggregate(
             total_laid_eggs=models.Sum("laid_eggs"),
             total_broken_eggs=models.Sum("broken_eggs"),
-            total_sold_eggs=models.Sum("sold_eggs"),
             total_dead_chickens=models.Sum("dead_chickens"),
             average_productivity=models.Avg("productivity"),
         )
@@ -31,7 +30,15 @@ class FarmStatisticsAPIView(GenericAPIView):
         statistics["total_remaining_eggs"] = farm_resource.eggs_count
         statistics["total_chickens"] = farm_resource.chickens_count
 
+        # TODO
+        statistics["average_price"] = 0
+        statistics["total_sold_eggs"] = 0
+        statistics["total_cash_payment"] = 0
+        statistics["total_card_payment"] = 0
+        statistics["total_debt_payment"] = 0
+        statistics["total_payment"] = 0
+
         return Response(statistics, status=status.HTTP_200_OK)
 
 
-__all__ = ["FarmStatisticsAPIView"]
+__all__ = ["IncomeStatisticsAPIView"]

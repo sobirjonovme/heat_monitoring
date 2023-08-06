@@ -1,11 +1,10 @@
 from django.urls import path
 
-from .api_endpoints import (CreateDailyReportAPIView,
+from .api_endpoints import (CreateDailyReportAPIView, CreateFarmExpenseAPIView,
                             CreateIncomeDebtPaybackAPIView,
                             CreateSalesReportAPIView, DailyReportListAPIView,
-                            FarmStatisticsAPIView,
                             IncomeDebtPaybackListAPIView,
-                            SalesReportListAPIView)
+                            IncomeStatisticsAPIView, SalesReportListAPIView)
 
 app_name = "chicken_farm"
 
@@ -19,6 +18,8 @@ urlpatterns = [
     # income debt payback
     path("income-debt-payback/create/", CreateIncomeDebtPaybackAPIView.as_view(), name="create-income-debt-payback"),
     path("income-debt-payback/list/", IncomeDebtPaybackListAPIView.as_view(), name="list-income-debt-payback"),
+    # farm expenses
+    path("farm-expense/create/", CreateFarmExpenseAPIView.as_view(), name="create-farm-expense"),
     # farm statistics
-    path("farm-statistics/", FarmStatisticsAPIView.as_view(), name="farm-statistics"),
+    path("income-statistics/", IncomeStatisticsAPIView.as_view(), name="income-statistics"),
 ]
