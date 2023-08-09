@@ -3,7 +3,8 @@ from django.urls import path
 from .api_endpoints import (CreateDailyReportAPIView, CreateDebtPaybackAPIView,
                             CreateFarmExpenseAPIView, CreateSalesReportAPIView,
                             DailyReportListAPIView, DebtPaybackListAPIView,
-                            FarmExpenseListAPIView, IncomeStatisticsAPIView,
+                            ExpenseTypeStatisticsView, FarmExpenseListAPIView,
+                            IncomeStatisticsAPIView,
                             OutgoingsStatisticsAPIView, SalesReportListAPIView)
 
 app_name = "chicken_farm"
@@ -23,4 +24,6 @@ urlpatterns = [
     path("outgoings-statistics/", OutgoingsStatisticsAPIView.as_view(), name="outgoings-statistics"),
     path("debt-payback/create/", CreateDebtPaybackAPIView.as_view(), name="create-debt-payback"),
     path("debt-payback/list/", DebtPaybackListAPIView.as_view(), name="list-debt-payback"),
+    # statistics
+    path("expense-type-statistics/", ExpenseTypeStatisticsView.as_view(), name="expense-type-statistics"),
 ]
