@@ -5,7 +5,8 @@ from .api_endpoints import (CreateDailyReportAPIView, CreateDebtPaybackAPIView,
                             DailyReportListAPIView, DebtPaybackListAPIView,
                             ExpenseTypeStatisticsView, FarmExpenseListAPIView,
                             IncomeStatisticsAPIView,
-                            OutgoingsStatisticsAPIView, SalesReportListAPIView)
+                            OutgoingsStatisticsAPIView, OverallStatisticsView,
+                            SalesReportListAPIView)
 
 app_name = "chicken_farm"
 
@@ -26,4 +27,5 @@ urlpatterns = [
     path("debt-payback/list/", DebtPaybackListAPIView.as_view(), name="list-debt-payback"),
     # statistics
     path("expense-type-statistics/", ExpenseTypeStatisticsView.as_view(), name="expense-type-statistics"),
+    path("overall-statistics/", OverallStatisticsView.as_view(), name="overall-statistics"),
 ]
