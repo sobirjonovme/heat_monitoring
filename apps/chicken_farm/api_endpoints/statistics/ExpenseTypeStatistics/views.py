@@ -2,6 +2,7 @@ from django.db import models
 from rest_framework.generics import ListAPIView
 
 from apps.chicken_farm.models import FarmExpense, FarmExpenseType
+from apps.chicken_farm.permissions import IsFarmCounterOrAdmin
 
 from .serializers import ExpenseTypeStatisticsSerializer
 
@@ -9,6 +10,7 @@ from .serializers import ExpenseTypeStatisticsSerializer
 class ExpenseTypeStatisticsView(ListAPIView):
     queryset = FarmExpenseType.objects.all()
     serializer_class = ExpenseTypeStatisticsSerializer
+    permission_classes = (IsFarmCounterOrAdmin,)
 
     def get_queryset(self):
         expense_queryset = FarmExpense.objects.filter(type_id=models.OuterRef("id")).annotate(

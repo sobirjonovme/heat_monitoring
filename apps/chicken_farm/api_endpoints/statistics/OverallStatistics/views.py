@@ -3,12 +3,14 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.chicken_farm.models import FarmExpense, FarmSalesReport
+from apps.chicken_farm.permissions import IsFarmCounterOrAdmin
 
 from .serializers import ExpenseTypeStatisticsSerializer
 
 
 class OverallStatisticsView(APIView):
     serializer_class = ExpenseTypeStatisticsSerializer
+    permission_classes = (IsFarmCounterOrAdmin,)
 
     def get(self, request, *args, **kwargs):
         statistics = {}
