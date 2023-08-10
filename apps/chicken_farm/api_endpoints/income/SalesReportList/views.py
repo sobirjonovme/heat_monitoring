@@ -1,10 +1,10 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.generics import ListAPIView
 
+from apps.chicken_farm.filters import SalesReportFilter
 from apps.chicken_farm.models import FarmSalesReport
 from apps.chicken_farm.permissions import IsFarmCounterOrAdmin
 
-from .filters import SalesReportFilter
 from .serializers import SalesReportListSerializer
 
 
