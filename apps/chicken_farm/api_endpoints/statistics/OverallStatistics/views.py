@@ -32,7 +32,11 @@ class OverallStatisticsView(APIView):
                 continue
             statistics[date] = {"income": 0, "expenses": expense.total_payment, "date": date}
 
-        return Response(statistics.values(), status=status.HTTP_200_OK)
+        # sort by date
+        statistics = statistics.values()
+        statistics = sorted(statistics, key=lambda x: x["date"])
+
+        return Response(statistics, status=status.HTTP_200_OK)
 
 
 __all__ = ["OverallStatisticsView"]

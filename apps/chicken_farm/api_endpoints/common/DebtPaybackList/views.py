@@ -9,7 +9,7 @@ from .serializers import FarmDebtPaybackListSerializer
 
 
 class DebtPaybackListAPIView(ListAPIView):
-    queryset = FarmDebtPayback.objects.all()
+    queryset = FarmDebtPayback.objects.all().order_by("-paid_at")
     serializer_class = FarmDebtPaybackListSerializer
     permission_classes = (IsFarmCounterOrAdmin,)
 

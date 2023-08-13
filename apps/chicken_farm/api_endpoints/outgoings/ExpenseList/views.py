@@ -9,7 +9,7 @@ from .serializers import FarmExpenseListSerializer
 
 
 class FarmExpenseListAPIView(ListAPIView):
-    queryset = FarmExpense.objects.all()
+    queryset = FarmExpense.objects.all().order_by("-date")
     serializer_class = FarmExpenseListSerializer
     permission_classes = (IsFarmCounterOrAdmin,)
 

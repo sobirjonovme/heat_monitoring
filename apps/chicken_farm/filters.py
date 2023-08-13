@@ -15,21 +15,33 @@ class DailyReportFilter(filters.FilterSet):
 
 
 class SalesReportFilter(filters.FilterSet):
-    from_date = filters.DateFilter(field_name="sold_at", lookup_expr="gte")
-    to_date = filters.DateFilter(field_name="sold_at", lookup_expr="lte")
+    from_date = filters.DateFilter(field_name="sold_at__date", lookup_expr="gte")
+    to_date = filters.DateFilter(field_name="sold_at__date", lookup_expr="lte")
+    only_debt = filters.BooleanFilter(field_name="debt", method="filter_debt")
 
     class Meta:
         model = FarmSalesReport
-        fields = ("from_date", "to_date")
+        fields = ("from_date", "to_date", "only_debt")
+
+    def filter_debt(self, queryset, name, value):
+        if value:
+            return queryset.filter(debt_payment__gt=0)
+        return queryset
 
 
 class FarmExpenseFilter(filters.FilterSet):
     from_date = filters.DateFilter(field_name="date", lookup_expr="gte")
     to_date = filters.DateFilter(field_name="date", lookup_expr="lte")
+    only_debt = filters.BooleanFilter(field_name="debt", method="filter_debt")
 
     class Meta:
         model = FarmExpense
-        fields = ("from_date", "to_date", "type")
+        fields = ("from_date", "to_date", "type", "only_debt")
+
+    def filter_debt(self, queryset, name, value):
+        if value:
+            return queryset.filter(debt_payment__gt=0)
+        return queryset
 
 
 DATE_FILTER_PARAMETERS = [
