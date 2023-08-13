@@ -1,21 +1,22 @@
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.chicken_farm.filters import (DATE_FILTER_PARAMETERS,
+                                       FarmExpenseFilter, SalesReportFilter)
 from apps.chicken_farm.models import FarmExpense, FarmSalesReport
 from apps.chicken_farm.permissions import IsFarmCounterOrAdmin
 
-from .serializers import ExpenseTypeStatisticsSerializer
-
 
 class OverallStatisticsView(APIView):
-    serializer_class = ExpenseTypeStatisticsSerializer
     permission_classes = (IsFarmCounterOrAdmin,)
 
+    @swagger_auto_schema(manual_parameters=DATE_FILTER_PARAMETERS)
     def get(self, request, *args, **kwargs):
         statistics = {}
 
-        sales = FarmSalesReport.objects.all()
+        sales = SalesReportFilter(request.GET, queryset=FarmSalesReport.objects.all()).qs
         for sale in sales:
             date = sale.sold_at.date()
             if statistics.get(date):
@@ -23,7 +24,7 @@ class OverallStatisticsView(APIView):
                 continue
             statistics[date] = {"income": sale.total_payment, "expenses": 0, "date": date}
 
-        expenses = FarmExpense.objects.all()
+        expenses = FarmExpenseFilter(request.GET, queryset=FarmExpense.objects.all()).qs
         for expense in expenses:
             date = expense.date
             if statistics.get(date):

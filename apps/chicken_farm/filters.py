@@ -1,4 +1,5 @@
 from django_filters import rest_framework as filters
+from drf_yasg import openapi
 
 from apps.chicken_farm.models import (FarmDailyReport, FarmExpense,
                                       FarmSalesReport)
@@ -29,3 +30,9 @@ class FarmExpenseFilter(filters.FilterSet):
     class Meta:
         model = FarmExpense
         fields = ("from_date", "to_date", "type")
+
+
+DATE_FILTER_PARAMETERS = [
+    openapi.Parameter("from_date", openapi.IN_QUERY, type=openapi.FORMAT_DATE),
+    openapi.Parameter("to_date", openapi.IN_QUERY, type=openapi.FORMAT_DATE),
+]

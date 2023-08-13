@@ -1,9 +1,11 @@
 from django.db import models
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.chicken_farm.filters import DailyReportFilter, SalesReportFilter
+from apps.chicken_farm.filters import (DATE_FILTER_PARAMETERS,
+                                       DailyReportFilter, SalesReportFilter)
 from apps.chicken_farm.models import (FarmDailyReport, FarmResource,
                                       FarmSalesReport)
 from apps.chicken_farm.permissions import IsFarmCounterOrAdmin
@@ -12,9 +14,7 @@ from apps.chicken_farm.permissions import IsFarmCounterOrAdmin
 class IncomeStatisticsAPIView(APIView):
     permission_classes = (IsFarmCounterOrAdmin,)
 
-    # filter_backends = (DjangoFilterBackend,)
-    # filterset_class = DailyReportFilter
-
+    @swagger_auto_schema(manual_parameters=DATE_FILTER_PARAMETERS)
     def get(self, request, *args, **kwargs):
         daily_reports = DailyReportFilter(request.GET, queryset=FarmDailyReport.objects.all()).qs
 

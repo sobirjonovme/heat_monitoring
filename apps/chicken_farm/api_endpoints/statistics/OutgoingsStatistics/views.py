@@ -1,25 +1,23 @@
 from django.db import models
-from django_filters.rest_framework import DjangoFilterBackend
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
-from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from apps.chicken_farm.filters import FarmExpenseFilter
+from apps.chicken_farm.filters import DATE_FILTER_PARAMETERS, FarmExpenseFilter
 from apps.chicken_farm.models import FarmExpense
 from apps.chicken_farm.permissions import IsFarmCounterOrAdmin
 
 
-class OutgoingsStatisticsAPIView(GenericAPIView):
-    queryset = FarmExpense.objects.all()
+class OutgoingsStatisticsAPIView(APIView):
     permission_classes = (IsFarmCounterOrAdmin,)
 
-    filter_backends = (DjangoFilterBackend,)
-    filterset_class = FarmExpenseFilter
-
+    @swagger_auto_schema(manual_parameters=DATE_FILTER_PARAMETERS)
     def get(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
+        queryset = FarmExpense.objects.all()
+        filtered_queryset = FarmExpenseFilter(request.GET, queryset=queryset).qs
 
-        statistics = queryset.aggregate(
+        statistics = filtered_queryset.aggregate(
             total_card_payment=models.Sum("card_payment"),
             total_cash_payment=models.Sum("cash_payment"),
             total_debt_payment=models.Sum("debt_payment"),
