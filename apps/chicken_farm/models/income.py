@@ -40,7 +40,9 @@ class FarmDailyReport(TimeStampedModel):
 
 
 class FarmSalesReport(TimeStampedModel):
-    sold_eggs = models.PositiveIntegerField(verbose_name=_("sold eggs"), default=0, help_text=_("sold eggs in boxes"))
+    sold_eggs = models.PositiveIntegerField(  # in boxes, not single eggs
+        verbose_name=_("sold eggs"), default=0, help_text=_("sold eggs in boxes")
+    )
     price_per_box = models.PositiveIntegerField(verbose_name=_("price per box"), default=0)
     comment = models.TextField(verbose_name=_("comment"), null=True, blank=True)
     card_payment = models.DecimalField(verbose_name=_("Card money"), max_digits=10, decimal_places=2, default=0)
@@ -63,9 +65,5 @@ class FarmSalesReport(TimeStampedModel):
         return self.cash_payment + self.card_payment + self.debt_payment
 
     @property
-    def money_difference(self):
-        # if the difference is less than 1000, then it's ok
-        difference = self.total_payment - (self.sold_eggs * self.price_per_box)
-        if abs(difference) < 1_000:
-            return 0
-        return difference
+    def sold_eggs_count(self):
+        return int(self.sold_eggs) * 30

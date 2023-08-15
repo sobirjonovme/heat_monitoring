@@ -20,11 +20,11 @@ def daily_report_post_signal(sender, instance, created, **kwargs):
         # store total remaining eggs in daily report
         instance.total_remaining_eggs = farm_resource.eggs_count
 
+        # if instance.productivity is None:
         # calculate daily productivity
-        if instance.productivity is None:
-            productivity = instance.laid_eggs / farm_resource.chickens_count * 100
-            # round productivity to 1 decimal places
-            instance.productivity = round(productivity, 1)
+        productivity = instance.laid_eggs / farm_resource.chickens_count * 100
+        # round productivity to 1 decimal places
+        instance.productivity = round(productivity, 1)
         instance.save()
 
 
@@ -34,8 +34,13 @@ def sales_report_post_signal(sender, instance, created, **kwargs):
     farm_resource = FarmResource.get_solo()
 
     if created:
+        # calculate debt and update instance
+        instance.debt_payment = (
+                instance.price_per_box * instance.sold_eggs - instance.card_payment - instance.cash_payment
+        )
+        instance.save()
         # update FARMS RESOURCE
-        farm_resource.eggs_count -= instance.sold_eggs
+        farm_resource.eggs_count -= instance.sold_eggs_count
         farm_resource.save()
 
 
