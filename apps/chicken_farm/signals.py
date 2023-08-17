@@ -17,10 +17,10 @@ def daily_report_post_signal(sender, instance, created, **kwargs):
         farm_resource.chickens_count -= instance.dead_chickens
         farm_resource.save()
 
-        # store total remaining eggs in daily report
+        # store total remaining eggs and remaining chickens in daily report
         instance.total_remaining_eggs = farm_resource.eggs_count
+        instance.remaining_chickens = farm_resource.chickens_count
 
-        # if instance.productivity is None:
         # calculate daily productivity
         productivity = instance.laid_eggs / farm_resource.chickens_count * 100
         # round productivity to 1 decimal places
