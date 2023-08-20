@@ -29,9 +29,16 @@ class DailyReportAdmin(admin.ModelAdmin):
     readonly_fields = ("reported_by", "created_at", "updated_at")
 
     def save_model(self, request, obj, form, change):
+        # find most recent daily report
+        most_recent_date = obj.date
+        if obj.id:
+            most_recent_date = min(FarmDailyReport.objects.get(id=obj.id).date, most_recent_date)
         # update sales report posted after this daily report and FarmResource
         obj.save()
-        bulk_update_daily_reports(obj)
+        most_recent_report = FarmDailyReport.objects.filter(date__lte=most_recent_date).order_by("-date").first()
+        if not most_recent_report:
+            most_recent_report = FarmDailyReport.objects.filter(date__gte=most_recent_date).order_by("date").first()
+        bulk_update_daily_reports(most_recent_report)
 
 
 @admin.register(FarmSalesReport)
@@ -40,6 +47,18 @@ class SalesReportAdmin(admin.ModelAdmin):
     list_display_links = ("id", "sold_at")
     search_fields = ("id", "sold_at")
     readonly_fields = ("reported_by", "created_at", "updated_at")
+
+    def save_model(self, request, obj, form, change):
+        # find most recent daily report
+        most_recent_date = obj.sold_at.date()
+        if obj.id:
+            most_recent_date = min(FarmSalesReport.objects.get(id=obj.id).sold_at.date(), most_recent_date)
+        obj.save()
+        # update daily report posted before this sales report and FarmResource
+        related_daily_report = FarmDailyReport.objects.filter(date=most_recent_date).first()
+        if not related_daily_report:
+            related_daily_report = FarmDailyReport.objects.create(date=most_recent_date, via_sales_report=True)
+        bulk_update_daily_reports(related_daily_report)
 
 
 @admin.register(FarmDebtPayback)

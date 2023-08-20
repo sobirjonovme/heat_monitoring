@@ -4,7 +4,6 @@ from django.utils.translation import gettext_lazy as _
 from solo.models import SingletonModel
 
 from apps.chicken_farm.choices import FarmDebtPaybackType
-from apps.chicken_farm.models.income import FarmDailyReport
 from apps.common.choices import DebtPaybackMethod
 from apps.common.models import TimeStampedModel
 
@@ -23,6 +22,8 @@ class FarmResource(SingletonModel, TimeStampedModel):
     @classmethod
     def update_according_to_last_report(cls, last_report=None):
         if not last_report:
+            from apps.chicken_farm.models.income import FarmDailyReport
+
             last_report = FarmDailyReport.objects.order_by("-date").first()
         if last_report:
             farm_resource = cls.get_solo()
