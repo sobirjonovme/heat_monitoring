@@ -31,7 +31,7 @@ class IncomeStatisticsAPIView(APIView):
 
         sales = SalesReportFilter(request.GET, queryset=FarmSalesReport.objects.all()).qs
         sales_statistics = sales.aggregate(
-            total_sold_eggs=models.Sum("sold_eggs"),
+            total_sold_eggs=models.Sum("sold_egg_boxes"),
             total_cash_payment=models.Sum("cash_payment"),
             total_card_payment=models.Sum("card_payment"),
             total_debt_payment=models.Sum("debt_payment"),
