@@ -16,6 +16,10 @@ class CreateSalesReportSerializer(serializers.ModelSerializer):
             "debt_payment",
         )
 
+        extra_kwargs = {
+            "debt_payment": {"read_only": True},
+        }
+
     def validate(self, data):
         farm_resource = FarmResource.get_solo()
         print(data)
