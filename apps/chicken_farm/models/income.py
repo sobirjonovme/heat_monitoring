@@ -98,9 +98,9 @@ class FarmDailyReport(TimeStampedModel):
 
 class FarmSalesReport(TimeStampedModel):
     sold_egg_boxes = models.PositiveIntegerField(  # in boxes, not single eggs
-        verbose_name=_("sold eggs"), default=0, help_text=_("sold eggs in boxes")
+        verbose_name=_("sold eggs"), help_text=_("sold eggs in boxes")
     )
-    price_per_box = models.PositiveIntegerField(verbose_name=_("price per box"), default=0)
+    price_per_box = models.PositiveIntegerField(verbose_name=_("price per box"))
     comment = models.TextField(verbose_name=_("comment"), null=True, blank=True)
     card_payment = models.DecimalField(verbose_name=_("Card money"), max_digits=10, decimal_places=2, default=0)
     cash_payment = models.DecimalField(verbose_name=_("Cash money"), max_digits=10, decimal_places=2, default=0)
