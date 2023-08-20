@@ -8,7 +8,7 @@ class CreateSalesReportSerializer(serializers.ModelSerializer):
     class Meta:
         model = FarmSalesReport
         fields = (
-            "sold_eggs",
+            "sold_egg_boxes",
             "price_per_box",
             "comment",
             "card_payment",
@@ -21,7 +21,7 @@ class CreateSalesReportSerializer(serializers.ModelSerializer):
         print(data)
 
         # Check if there is enough eggs to sell
-        if farm_resource.eggs_count < data["sold_eggs"]:
+        if farm_resource.eggs_count < data["sold_egg_boxes"] * 30:
             raise serializers.ValidationError(code="not_enough_eggs", detail=_("There is not enough eggs to sell"))
 
         # Check if total money is equal to the sum of card, cash and debt money

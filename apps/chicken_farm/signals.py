@@ -1,33 +1,10 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from apps.chicken_farm.models import (FarmDailyReport, FarmResource,
-                                      FarmSalesReport)
+from apps.chicken_farm.models import FarmResource, FarmSalesReport
 
 
 # Define the signal handler function
-@receiver(post_save, sender=FarmDailyReport)
-def daily_report_post_signal(sender, instance, created, **kwargs):
-    # get FARM RESOURCE
-    farm_resource = FarmResource.get_solo()
-
-    if created:
-        # update FARMS RESOURCE
-        farm_resource.eggs_count += instance.laid_eggs - instance.broken_eggs
-        farm_resource.chickens_count -= instance.dead_chickens
-        farm_resource.save()
-
-        # store total remaining eggs in daily report
-        instance.total_remaining_eggs = farm_resource.eggs_count
-
-        # calculate daily productivity
-        if instance.productivity is None:
-            productivity = instance.laid_eggs / farm_resource.chickens_count * 100
-            # round productivity to 1 decimal places
-            instance.productivity = round(productivity, 1)
-        instance.save()
-
-
 @receiver(post_save, sender=FarmSalesReport)
 def sales_report_post_signal(sender, instance, created, **kwargs):
     # get FARM RESOURCE
@@ -35,7 +12,7 @@ def sales_report_post_signal(sender, instance, created, **kwargs):
 
     if created:
         # update FARMS RESOURCE
-        farm_resource.eggs_count -= instance.sold_eggs
+        farm_resource.eggs_count -= instance.sold_egg_boxes * 30
         farm_resource.save()
 
 

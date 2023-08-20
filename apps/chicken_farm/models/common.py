@@ -1,10 +1,34 @@
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from solo.models import SingletonModel
 
 from apps.chicken_farm.choices import FarmDebtPaybackType
+from apps.chicken_farm.models.income import FarmDailyReport
 from apps.common.choices import DebtPaybackMethod
 from apps.common.models import TimeStampedModel
+
+
+class FarmResource(SingletonModel, TimeStampedModel):
+    chickens_count = models.PositiveIntegerField(verbose_name=_("chickens count"), default=0)
+    eggs_count = models.PositiveIntegerField(verbose_name=_("eggs count"), default=0)
+
+    class Meta:
+        verbose_name = "farm resource"
+        verbose_name_plural = "farm resource"
+
+    def __str__(self):
+        return str(_("Farm Resource"))
+
+    @classmethod
+    def update_according_to_last_report(cls, last_report=None):
+        if not last_report:
+            last_report = FarmDailyReport.objects.order_by("-date").first()
+        if last_report:
+            farm_resource = cls.get_solo()
+            farm_resource.chickens_count = last_report.remaining_chickens
+            farm_resource.eggs_count = last_report.total_remaining_eggs
+            farm_resource.save()
 
 
 class FarmDebtPayback(TimeStampedModel):

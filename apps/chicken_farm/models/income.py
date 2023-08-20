@@ -1,24 +1,13 @@
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from solo.models import SingletonModel
 
 from apps.common.models import TimeStampedModel
 
+from .managers import DailyReportManager
+
 
 # Create your models here.
-class FarmResource(SingletonModel, TimeStampedModel):
-    chickens_count = models.PositiveIntegerField(verbose_name=_("chickens count"), default=0)
-    eggs_count = models.PositiveIntegerField(verbose_name=_("eggs count"), default=0)
-
-    class Meta:
-        verbose_name = "farm resource"
-        verbose_name_plural = "farm resource"
-
-    def __str__(self):
-        return str(_("Farm Resource"))
-
-
 class FarmDailyReport(TimeStampedModel):
     laid_eggs = models.PositiveIntegerField(verbose_name=_("laid eggs"), default=0)
     broken_eggs = models.PositiveIntegerField(verbose_name=_("broken eggs"), default=0)
@@ -31,6 +20,8 @@ class FarmDailyReport(TimeStampedModel):
         verbose_name=_("Reported by"), to="users.User", on_delete=models.SET_NULL, null=True, blank=True
     )
 
+    objects = DailyReportManager()
+
     class Meta:
         verbose_name = _("daily report")
         verbose_name_plural = _("daily reports")
@@ -38,9 +29,36 @@ class FarmDailyReport(TimeStampedModel):
     def __str__(self):
         return f"#{self.id} - {self.date}"
 
+    @property
+    def sold_egg_boxes(self):
+        sales_reports = FarmSalesReport.objects.filter(sold_at__date=self.date).distinct()
+        if sales_reports:
+            return sales_reports.aggregate(models.Sum("sold_egg_boxes"))["sold_egg_boxes__sum"]
+        return 0
+
+    def update_according_to_previous(self, previous_report=None):
+        if not previous_report:
+            # get previous daily report
+            previous_report = FarmDailyReport.objects.filter(date__lt=self.date).order_by("-date").first()
+        if previous_report:
+            # update remaining chickens
+            self.remaining_chickens = previous_report.remaining_chickens - self.dead_chickens
+            # update total remaining eggs
+            self.total_remaining_eggs = (
+                previous_report.total_remaining_eggs + self.laid_eggs - self.broken_eggs - self.sold_egg_boxes * 30
+            )
+            # update productivity
+            productivity = int(self.laid_eggs) / int(self.remaining_chickens) * 100
+            # round productivity to 1 decimal places
+            self.productivity = round(productivity, 1)
+            self.save()
+        return self
+
 
 class FarmSalesReport(TimeStampedModel):
-    sold_eggs = models.PositiveIntegerField(verbose_name=_("sold eggs"), default=0, help_text=_("sold eggs in boxes"))
+    sold_egg_boxes = models.PositiveIntegerField(
+        verbose_name=_("sold eggs"), default=0, help_text=_("sold eggs in boxes")
+    )
     price_per_box = models.PositiveIntegerField(verbose_name=_("price per box"), default=0)
     comment = models.TextField(verbose_name=_("comment"), null=True, blank=True)
     card_payment = models.DecimalField(verbose_name=_("Card money"), max_digits=10, decimal_places=2, default=0)

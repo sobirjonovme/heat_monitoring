@@ -2,6 +2,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
 from apps.chicken_farm.models import FarmDailyReport, FarmResource
+from apps.chicken_farm.utils import bulk_update_daily_reports
 
 
 class CreateDailyReportSerializer(serializers.ModelSerializer):
@@ -25,3 +26,9 @@ class CreateDailyReportSerializer(serializers.ModelSerializer):
             )
 
         return data
+
+    def create(self, validated_data):
+        # get farm resource
+        obj = super().create(validated_data)
+        bulk_update_daily_reports(obj)
+        return obj

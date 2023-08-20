@@ -9,7 +9,7 @@ class SalesReportListSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "sold_at",
-            "sold_eggs",
+            "sold_egg_boxes",
             "price_per_box",
             "comment",
             "card_payment",
