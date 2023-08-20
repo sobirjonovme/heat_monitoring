@@ -102,7 +102,7 @@ class FarmSalesReport(TimeStampedModel):
 
     @property
     def total_payment(self):
-        return self.cash_payment + self.card_payment + self.debt_payment
+        return self.price_per_box * self.sold_egg_boxes
 
     @property
     def sold_eggs_count(self):

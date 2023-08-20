@@ -19,7 +19,7 @@ class CreateDailyReportAPIView(CreateAPIView):
         today = timezone.now().date()
 
         # check if the report has not already been submitted today
-        if FarmDailyReport.objects.filter(date=today).exists():
+        if FarmDailyReport.objects.filter(date=today, via_sales_report=False).exists():
             raise ValidationError(code="already_submitted", detail=_("Report has already been submitted today"))
 
         return super().post(request, *args, **kwargs)

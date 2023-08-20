@@ -30,5 +30,9 @@ class CreateDailyReportSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         # get farm resource
         obj = super().create(validated_data)
+
+        # delete if there is a daily report with the same date created via sales report
+        FarmDailyReport.objects.filter(date=obj.date, via_sales_report=True).delete()
+
         bulk_update_daily_reports(obj)
         return obj

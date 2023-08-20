@@ -28,7 +28,11 @@ class CreateSalesReportSerializer(serializers.ModelSerializer):
         if farm_resource.eggs_count < data["sold_egg_boxes"] * 30:
             raise serializers.ValidationError(code="not_enough_eggs", detail=_("There is not enough eggs to sell"))
 
-        # Check if total money is equal to the sum of card, cash and debt money
-        # TODO
-
         return data
+
+    def create(self, validated_data):
+        # get farm resource
+        obj = super().create(validated_data)
+        obj.debt_payment = obj.total_payment - obj.card_payment - obj.cash_payment
+        obj.save()
+        return obj
