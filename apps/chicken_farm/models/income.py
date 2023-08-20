@@ -145,18 +145,13 @@ class FarmSalesReport(TimeStampedModel):
 
     def delete(self, using=None, keep_parents=False):
         # update next report according to this report deletion
-        next_daily_report = FarmDailyReport.objects.filter(date__gte=self.sold_at.date()).order_by("date").first()
+        start_daily_report = FarmDailyReport.objects.filter(date=self.sold_at.date()).first()
         res = super().delete(using=using, keep_parents=keep_parents)
 
-        if next_daily_report:
-            from apps.chicken_farm.utils import bulk_update_daily_reports
+        if not start_daily_report:
+            start_daily_report = FarmDailyReport.objects.create(date=self.sold_at.date(), via_sales_report=True)
+        from apps.chicken_farm.utils import bulk_update_daily_reports
 
-            print(f"\n\tnext_daily_report: {next_daily_report}\n")
-            bulk_update_daily_reports(next_daily_report)
-        else:
-            # if there is no next report, then update FarmResource
-            from apps.chicken_farm.models.common import FarmResource
-
-            FarmResource.update_according_to_last_report()
+        bulk_update_daily_reports(start_daily_report)
 
         return res
