@@ -48,20 +48,38 @@ class FarmDailyReport(TimeStampedModel):
             self.total_remaining_eggs = (
                 previous_report.total_remaining_eggs + self.laid_eggs - self.broken_eggs - self.sold_egg_boxes * 30
             )
-        elif FarmDailyReport.objects.filter(date__gt=self.date).exists():
-            # if there is no previous report, but there is a report after this one
-            # then update remaining chickens and total remaining eggs according to the next report
-            next_report = FarmDailyReport.objects.filter(date__gt=self.date).order_by("date").first()
-            self.remaining_chickens = next_report.remaining_chickens + next_report.dead_chickens - self.dead_chickens
-            self.total_remaining_eggs = (
-                next_report.total_remaining_eggs
-                - next_report.laid_eggs
-                + next_report.broken_eggs
-                + self.laid_eggs
-                - self.sold_egg_boxes * 30
-                - self.broken_eggs
-            )
-        else:
+        # elif FarmDailyReport.objects.filter(date__gt=self.date).exists():
+        #     print("\n\tno previous report\n")
+        #     # if there is no previous report, but there is a report after this one
+        #     # then update remaining chickens and total remaining eggs according to the next report
+        #     next_report = FarmDailyReport.objects.filter(date__gt=self.date).order_by("date").first()
+        #     self.remaining_chickens = next_report.remaining_chickens + next_report.dead_chickens - self.dead_chickens
+        #     print(f"\n\tbefore update: {self.total_remaining_eggs}\n")
+        #     print(f"\n\tnext_report: {next_report}")
+        #     print(f"\teggs: {next_report.total_remaining_eggs}")
+        #     print(f"\tlaid_eggs: {next_report.laid_eggs}")
+        #     print(f"\tbroken_eggs: {next_report.broken_eggs}")
+        #     print(f"\tsold_egg_boxes: {next_report.sold_egg_boxes}")
+        #     print(f"\n\n\tself: {self}")
+        #     print(f"\teggs: {self.total_remaining_eggs}")
+        #     print(f"\tlaid_eggs: {self.laid_eggs}")
+        #     print(f"\tbroken_eggs: {self.broken_eggs}")
+        #     print(f"\tsold_egg_boxes: {self.sold_egg_boxes}")
+        #     self.total_remaining_eggs = (
+        #         next_report.total_remaining_eggs
+        #         - next_report.laid_eggs
+        #         + next_report.broken_eggs
+        #         + next_report.sold_egg_boxes * 30
+        #         + self.laid_eggs
+        #         - self.broken_eggs
+        #         - self.sold_egg_boxes * 30
+        #     )
+        #     print(f"\n\tafter update: {self.total_remaining_eggs}\n")
+        #     print(f"\teggs: {self.total_remaining_eggs}")
+        #     print(f"\tlaid_eggs: {self.laid_eggs}")
+        #     print(f"\tbroken_eggs: {self.broken_eggs}")
+        #     print(f"\tsold_egg_boxes: {self.sold_egg_boxes}")
+        elif not FarmDailyReport.objects.filter(date__gt=self.date).exists():
             # if there is no previous report and no report after this one
             # then update remaining chickens and total remaining eggs according to FarmResource
             from apps.chicken_farm.models.common import FarmResource
@@ -133,6 +151,7 @@ class FarmSalesReport(TimeStampedModel):
         if next_daily_report:
             from apps.chicken_farm.utils import bulk_update_daily_reports
 
+            print(f"\n\tnext_daily_report: {next_daily_report}\n")
             bulk_update_daily_reports(next_daily_report)
         else:
             # if there is no next report, then update FarmResource

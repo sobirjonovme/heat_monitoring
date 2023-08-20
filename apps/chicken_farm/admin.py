@@ -33,10 +33,10 @@ class DailyReportAdmin(admin.ModelAdmin):
         most_recent_date = obj.date
         if obj.id:
             most_recent_date = min(FarmDailyReport.objects.get(id=obj.id).date, most_recent_date)
+        else:
+            # delete if there is a daily report with the same date created via sales report
+            FarmDailyReport.objects.filter(date=obj.date, via_sales_report=True).delete()
         obj.save()
-
-        # delete if there is a daily report with the same date created via sales report
-        FarmDailyReport.objects.filter(date=obj.date, via_sales_report=True).delete()
 
         # update daily report posted before this daily report and FarmResource
         most_recent_report = FarmDailyReport.objects.filter(date__lte=most_recent_date).order_by("-date").first()
