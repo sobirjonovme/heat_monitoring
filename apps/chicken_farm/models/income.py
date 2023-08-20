@@ -78,6 +78,23 @@ class FarmDailyReport(TimeStampedModel):
         self.save()
         return self
 
+    def delete(self, using=None, keep_parents=False):
+        # update next report according to this report deletion
+        next_report = FarmDailyReport.objects.filter(date__gt=self.date).order_by("date").first()
+        res = super().delete(using=using, keep_parents=keep_parents)
+
+        if next_report:
+            from apps.chicken_farm.utils import bulk_update_daily_reports
+
+            bulk_update_daily_reports(next_report)
+        else:
+            # if there is no next report, then update FarmResource
+            from apps.chicken_farm.models.common import FarmResource
+
+            FarmResource.update_according_to_last_report()
+
+        return res
+
 
 class FarmSalesReport(TimeStampedModel):
     sold_egg_boxes = models.PositiveIntegerField(  # in boxes, not single eggs
@@ -106,4 +123,21 @@ class FarmSalesReport(TimeStampedModel):
 
     @property
     def sold_eggs_count(self):
-        return int(self.sold_eggs) * 30
+        return int(self.sold_egg_boxes) * 30
+
+    def delete(self, using=None, keep_parents=False):
+        # update next report according to this report deletion
+        next_daily_report = FarmDailyReport.objects.filter(date__gte=self.sold_at.date()).order_by("date").first()
+        res = super().delete(using=using, keep_parents=keep_parents)
+
+        if next_daily_report:
+            from apps.chicken_farm.utils import bulk_update_daily_reports
+
+            bulk_update_daily_reports(next_daily_report)
+        else:
+            # if there is no next report, then update FarmResource
+            from apps.chicken_farm.models.common import FarmResource
+
+            FarmResource.update_according_to_last_report()
+
+        return res
