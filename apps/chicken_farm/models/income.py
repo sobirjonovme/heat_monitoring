@@ -38,10 +38,17 @@ class FarmDailyReport(TimeStampedModel):
         return 0
 
     def update_according_to_previous(self, previous_report=None):
+        print(f"\n\tbefore update: {self.total_remaining_eggs}\n")
+        print(f"\n\n\tself: {self}")
+        print(f"\teggs: {self.total_remaining_eggs}")
+        print(f"\tlaid_eggs: {self.laid_eggs}")
+        print(f"\tbroken_eggs: {self.broken_eggs}")
+        print(f"\tsold_egg_boxes: {self.sold_egg_boxes}")
         if not previous_report:
             # get previous daily report
             previous_report = FarmDailyReport.objects.filter(date__lt=self.date).order_by("-date").first()
         if previous_report:
+            print(f"\n\tprevious_report: {previous_report}")
             # update remaining chickens
             self.remaining_chickens = previous_report.remaining_chickens - self.dead_chickens
             # update total remaining eggs
@@ -79,7 +86,12 @@ class FarmDailyReport(TimeStampedModel):
         #     print(f"\tlaid_eggs: {self.laid_eggs}")
         #     print(f"\tbroken_eggs: {self.broken_eggs}")
         #     print(f"\tsold_egg_boxes: {self.sold_egg_boxes}")
-        elif not FarmDailyReport.objects.filter(date__gt=self.date).exists():
+        elif (
+            not FarmDailyReport.objects.filter(date__gt=self.date).exists()
+            and not self.total_remaining_eggs
+            and not self.remaining_chickens
+        ):
+            print("\n\tno previous report\n")
             # if there is no previous report and no report after this one
             # then update remaining chickens and total remaining eggs according to FarmResource
             from apps.chicken_farm.models.common import FarmResource
@@ -89,6 +101,11 @@ class FarmDailyReport(TimeStampedModel):
             self.total_remaining_eggs = (
                 farm_resource.eggs_count + self.laid_eggs - self.broken_eggs - self.sold_egg_boxes * 30
             )
+        print(f"\n\tafter update: {self.total_remaining_eggs}\n")
+        print(f"\teggs: {self.total_remaining_eggs}")
+        print(f"\tlaid_eggs: {self.laid_eggs}")
+        print(f"\tbroken_eggs: {self.broken_eggs}")
+        print(f"\tsold_egg_boxes: {self.sold_egg_boxes}")
         # update productivity
         productivity = int(self.laid_eggs) / int(self.remaining_chickens) * 100
         # round productivity to 1 decimal places
