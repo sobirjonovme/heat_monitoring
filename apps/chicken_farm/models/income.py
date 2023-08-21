@@ -85,9 +85,9 @@ class FarmDailyReport(TimeStampedModel):
             from apps.chicken_farm.models.common import FarmResource
 
             farm_resource = FarmResource.get_solo()
-            self.remaining_chickens = farm_resource.remaining_chickens - self.dead_chickens
+            self.remaining_chickens = farm_resource.chickens_count - self.dead_chickens
             self.total_remaining_eggs = (
-                farm_resource.total_remaining_eggs + self.laid_eggs - self.broken_eggs - self.sold_egg_boxes * 30
+                farm_resource.eggs_count + self.laid_eggs - self.broken_eggs - self.sold_egg_boxes * 30
             )
         # update productivity
         productivity = int(self.laid_eggs) / int(self.remaining_chickens) * 100
