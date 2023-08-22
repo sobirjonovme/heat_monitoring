@@ -65,3 +65,59 @@ class FarmDebtPayback(TimeStampedModel):
 
     def __str__(self):
         return f"#{self.id} - {self.type}"
+
+    def delete(self, using=None, keep_parents=False):
+        self.unapply_to_report()
+        return super().delete(using=using, keep_parents=keep_parents)
+
+    def apply_to_report(self):
+        # Update Expense or Sales Report according to this payback
+        # reduce debt by amount, increase card or cash payment by amount
+
+        # Check if this payback is via card or cash
+        via_card = self.payment_method == DebtPaybackMethod.CARD
+        via_cash = self.payment_method == DebtPaybackMethod.CASH
+
+        # if Debt Payback is for expense
+        if self.type == FarmDebtPaybackType.OUTGOINGS:
+            if via_card:
+                self.expense.card_payment += self.amount
+            elif via_cash:
+                self.expense.cash_payment += self.amount
+            self.expense.debt_payment -= self.amount
+            self.expense.save()
+
+        # if Debt Payback is for sales
+        elif self.type == FarmDebtPaybackType.INCOME:
+            if via_card:
+                self.sales_report.card_payment += self.amount
+            elif via_cash:
+                self.sales_report.cash_payment += self.amount
+            self.sales_report.debt_payment -= self.amount
+            self.sales_report.save()
+
+    def unapply_to_report(self):
+        # Back Sales Report or Expense to previous state, before applying this payback
+        # increase debt by amount, reduce card or cash payment by amount
+
+        # Check if this payback is via card or cash
+        via_card = self.payment_method == DebtPaybackMethod.CARD
+        via_cash = self.payment_method == DebtPaybackMethod.CASH
+
+        # if Debt Payback is for expense
+        if self.type == FarmDebtPaybackType.OUTGOINGS:
+            if via_card:
+                self.expense.card_payment -= self.amount
+            elif via_cash:
+                self.expense.cash_payment -= self.amount
+            self.expense.debt_payment += self.amount
+            self.expense.save()
+
+        # if Debt Payback is for sales
+        elif self.type == FarmDebtPaybackType.INCOME:
+            if via_card:
+                self.sales_report.card_payment -= self.amount
+            elif via_cash:
+                self.sales_report.cash_payment -= self.amount
+            self.sales_report.debt_payment += self.amount
+            self.sales_report.save()
