@@ -37,11 +37,15 @@ class IncomeStatisticsAPIView(APIView):
             total_debt_payment=models.Sum("debt_payment"),
             average_price=models.Avg("price_per_box"),
         )
-        sales_statistics["total_payment"] = (
-            sales_statistics["total_cash_payment"]
-            + sales_statistics["total_card_payment"]
-            + sales_statistics["total_debt_payment"]
-        )
+        if sales_statistics["total_cash_payment"] is not None:
+            # If there are no sales, the payments (total_cash_payment, ...) will be None
+            sales_statistics["total_payment"] = (
+                sales_statistics["total_cash_payment"]
+                + sales_statistics["total_card_payment"]
+                + sales_statistics["total_debt_payment"]
+            )
+        else:
+            sales_statistics["total_payment"] = None
 
         statistics.update(sales_statistics)
 

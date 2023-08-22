@@ -23,9 +23,13 @@ class OutgoingsStatisticsAPIView(APIView):
             total_debt_payment=models.Sum("debt_payment"),
         )
 
-        statistics["total_payment"] = (
-            statistics["total_card_payment"] + statistics["total_cash_payment"] + statistics["total_debt_payment"]
-        )
+        if statistics["total_cash_payment"] is not None:
+            # If there are no sales, the payments (total_cash_payment, ...) will be None
+            statistics["total_payment"] = (
+                statistics["total_card_payment"] + statistics["total_cash_payment"] + statistics["total_debt_payment"]
+            )
+        else:
+            statistics["total_payment"] = None
 
         return Response(statistics, status=status.HTTP_200_OK)
 
