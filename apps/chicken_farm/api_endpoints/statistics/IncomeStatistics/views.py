@@ -26,8 +26,8 @@ class IncomeStatisticsAPIView(APIView):
         )
 
         farm_resource = FarmResource.get_solo()
-        statistics["total_remaining_eggs"] = farm_resource.eggs_count
-        statistics["total_chickens"] = farm_resource.chickens_count
+        statistics["total_remaining_eggs"] = farm_resource.current_chickens_count
+        statistics["total_chickens"] = farm_resource.current_eggs_count
 
         sales = SalesReportFilter(request.GET, queryset=FarmSalesReport.objects.all()).qs
         sales_statistics = sales.aggregate(

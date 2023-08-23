@@ -26,7 +26,7 @@ class CreateSalesReportSerializer(serializers.ModelSerializer):
         print(data)
 
         # Check if there is enough eggs to sell
-        if farm_resource.eggs_count < data["sold_egg_boxes"] * 30:
+        if farm_resource.current_eggs_count < data["sold_egg_boxes"] * 30:
             raise serializers.ValidationError(code="not_enough_eggs", detail=_("There is not enough eggs to sell"))
 
         return data

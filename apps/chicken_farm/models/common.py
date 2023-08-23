@@ -9,12 +9,16 @@ from apps.common.models import TimeStampedModel
 
 
 class FarmResource(SingletonModel, TimeStampedModel):
-    chickens_count = models.PositiveIntegerField(verbose_name=_("chickens count"), default=0)
-    eggs_count = models.PositiveIntegerField(verbose_name=_("eggs count"), default=0)
+    # current farm resource
+    current_chickens_count = models.PositiveIntegerField(verbose_name=_("current chickens count"), default=0)
+    current_eggs_count = models.PositiveIntegerField(verbose_name=_("current eggs count"), default=0)
+    # initial farm resource
+    initial_chickens_count = models.PositiveIntegerField(verbose_name=_("current chickens count"), default=0)
+    initial_eggs_count = models.PositiveIntegerField(verbose_name=_("current eggs count"), default=0)
 
     class Meta:
-        verbose_name = "farm resource"
-        verbose_name_plural = "farm resource"
+        verbose_name = _("farm resource")
+        verbose_name_plural = _("farm resource")
 
     def __str__(self):
         return str(_("Farm Resource"))
@@ -27,8 +31,8 @@ class FarmResource(SingletonModel, TimeStampedModel):
             last_report = FarmDailyReport.objects.order_by("-date").first()
         if last_report:
             farm_resource = cls.get_solo()
-            farm_resource.chickens_count = last_report.remaining_chickens
-            farm_resource.eggs_count = last_report.total_remaining_eggs
+            farm_resource.current_chickens_count = last_report.remaining_chickens
+            farm_resource.current_eggs_count = last_report.total_remaining_eggs
             farm_resource.save()
 
 

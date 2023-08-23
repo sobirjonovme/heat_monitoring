@@ -20,7 +20,7 @@ class CreateDailyReportSerializer(serializers.ModelSerializer):
             )
 
         # check that no more chickens died than the available chickens
-        if data["dead_chickens"] > farm_resource.chickens_count:
+        if data["dead_chickens"] > farm_resource.current_chickens_count:
             raise serializers.ValidationError(
                 code="invalid", detail={"dead_chickens": _("Dead chickens can't be more than available chickens")}
             )
