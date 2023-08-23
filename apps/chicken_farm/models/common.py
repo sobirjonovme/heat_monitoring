@@ -13,8 +13,8 @@ class FarmResource(SingletonModel, TimeStampedModel):
     current_chickens_count = models.PositiveIntegerField(verbose_name=_("current chickens count"), default=0)
     current_eggs_count = models.PositiveIntegerField(verbose_name=_("current eggs count"), default=0)
     # initial farm resource
-    initial_chickens_count = models.PositiveIntegerField(verbose_name=_("current chickens count"), default=0)
-    initial_eggs_count = models.PositiveIntegerField(verbose_name=_("current eggs count"), default=0)
+    initial_chickens_count = models.PositiveIntegerField(verbose_name=_("initial chickens count"), default=0)
+    initial_eggs_count = models.PositiveIntegerField(verbose_name=_("initial eggs count"), default=0)
 
     class Meta:
         verbose_name = _("farm resource")

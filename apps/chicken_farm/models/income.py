@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -41,6 +42,7 @@ class FarmDailyReport(TimeStampedModel):
         if not previous_report:
             # get previous daily report
             previous_report = FarmDailyReport.objects.filter(date__lt=self.date).order_by("-date").first()
+        # update productivity
         if previous_report:
             # update remaining chickens
             self.remaining_chickens = previous_report.remaining_chickens - self.dead_chickens
@@ -48,21 +50,16 @@ class FarmDailyReport(TimeStampedModel):
             self.total_remaining_eggs = (
                 previous_report.total_remaining_eggs + self.laid_eggs - self.broken_eggs - self.sold_egg_boxes * 30
             )
-        elif (
-            not FarmDailyReport.objects.filter(date__gt=self.date).exists()
-            and not self.total_remaining_eggs
-            and not self.remaining_chickens
-        ):
-            # if there is no previous report and no report after this one
-            # then update remaining chickens and total remaining eggs according to FarmResource
+        else:
+            # if there is no previous report
+            # then update remaining chickens and total remaining eggs according to initial farm resource count
             from apps.chicken_farm.models.common import FarmResource
 
             farm_resource = FarmResource.get_solo()
-            self.remaining_chickens = farm_resource.current_chickens_count - self.dead_chickens
+            self.remaining_chickens = farm_resource.initial_chickens_count - self.dead_chickens
             self.total_remaining_eggs = (
-                farm_resource.current_eggs_count + self.laid_eggs - self.broken_eggs - self.sold_egg_boxes * 30
+                farm_resource.initial_eggs_count + self.laid_eggs - self.broken_eggs - self.sold_egg_boxes * 30
             )
-        # update productivity
         print(f"\n\nself: {self}\n\n")
         print(f"\n\nself.laid_eggs: {self.laid_eggs}\n\n")
         print(f"\n\nself.remaining_chickens: {self.remaining_chickens}\n\n")
@@ -71,6 +68,17 @@ class FarmDailyReport(TimeStampedModel):
         self.productivity = round(productivity, 1)
         self.save()
         return self
+
+    def clean(self):
+        # check if there is not a daily report with this date
+        if FarmDailyReport.objects.filter(date=self.date, via_sales_report=False).exclude(id=self.id).exists():
+            raise ValidationError(code="invalid", message={"date": _("A daily report with this date already exists.")})
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        # delete if there is a daily report with the same date created via sales report
+        FarmDailyReport.objects.filter(date=self.date, via_sales_report=True).delete()
+        super().save(*args, **kwargs)
 
     def delete(self, using=None, keep_parents=False):
         # update next report according to this report deletion
@@ -119,26 +127,29 @@ class FarmSalesReport(TimeStampedModel):
     def sold_eggs_count(self):
         return int(self.sold_egg_boxes) * 30
 
+    def get_local_sold_at(self):
+        # convert sold_at to local timezone
+        return timezone.localtime(self.sold_at)
+
     def delete(self, using=None, keep_parents=False):
         # update next report according to this report deletion
-        start_daily_report = FarmDailyReport.objects.filter(date=self.sold_at.date()).first()
         res = super().delete(using=using, keep_parents=keep_parents)
 
-        print(f"\n\nself: {self}\n\n")
-
-        if not start_daily_report:
-            start_daily_report = FarmDailyReport.objects.create(date=self.sold_at.date(), via_sales_report=True)
-        from apps.chicken_farm.utils import bulk_update_daily_reports
-
-        bulk_update_daily_reports(start_daily_report)
+        # Update FarmDailyReport and FarmResource after deleting this sales report
+        self.apply_to_related_daily_report()
 
         return res
 
     def apply_to_related_daily_report(self):
-        start_daily_report = FarmDailyReport.objects.filter(date=self.sold_at.date()).first()
+        # get sold date in local timezone
+        sold_date = self.get_local_sold_at().date()
+
+        start_daily_report = FarmDailyReport.objects.filter(date=sold_date).first()
         if not start_daily_report:
-            start_daily_report = FarmDailyReport.objects.create(date=self.sold_at.date(), via_sales_report=True)
+            start_daily_report = FarmDailyReport.objects.create(date=sold_date, via_sales_report=True)
+
         from apps.chicken_farm.utils import bulk_update_daily_reports
 
         bulk_update_daily_reports(start_daily_report)
+
         return start_daily_report

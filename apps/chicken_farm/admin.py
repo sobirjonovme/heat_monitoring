@@ -54,9 +54,9 @@ class SalesReportAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         # find most recent daily report
-        most_recent_date = obj.sold_at.date()
+        most_recent_date = obj.get_local_sold_at().date()
         if obj.id:
-            most_recent_date = min(FarmSalesReport.objects.get(id=obj.id).sold_at.date(), most_recent_date)
+            most_recent_date = min(FarmSalesReport.objects.get(id=obj.id).get_local_sold_at().date(), most_recent_date)
         obj.save()
         # update daily report posted before this sales report and FarmResource
         related_daily_report = FarmDailyReport.objects.filter(date=most_recent_date).first()
