@@ -60,9 +60,6 @@ class FarmDailyReport(TimeStampedModel):
             self.total_remaining_eggs = (
                 farm_resource.initial_eggs_count + self.laid_eggs - self.broken_eggs - self.sold_egg_boxes * 30
             )
-        print(f"\n\nself: {self}\n\n")
-        print(f"\n\nself.laid_eggs: {self.laid_eggs}\n\n")
-        print(f"\n\nself.remaining_chickens: {self.remaining_chickens}\n\n")
         productivity = int(self.laid_eggs) / int(self.remaining_chickens) * 100
         # round productivity to 1 decimal places
         self.productivity = round(productivity, 1)
