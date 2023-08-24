@@ -60,6 +60,7 @@ THIRD_PARTY_APPS = [
     "django_filters",
     "rest_framework_simplejwt",
     "sorl.thumbnail",
+    "celery",
 ]
 
 REST_FRAMEWORK = {
