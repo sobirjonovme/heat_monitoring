@@ -14,6 +14,7 @@ class CreateSalesReportSerializer(serializers.ModelSerializer):
             "card_payment",
             "cash_payment",
             "debt_payment",
+            "phone_number",
         )
 
         extra_kwargs = {

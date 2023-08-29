@@ -17,6 +17,7 @@ class SalesReportListSerializer(serializers.ModelSerializer):
             "cash_payment",
             "debt_payment",
             "total_payment",
+            "phone_number",
         )
 
     def create(self, validated_data):

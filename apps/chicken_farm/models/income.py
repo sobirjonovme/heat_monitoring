@@ -104,6 +104,7 @@ class FarmSalesReport(TimeStampedModel):
     card_payment = models.DecimalField(verbose_name=_("Card money"), max_digits=10, decimal_places=2, default=0)
     cash_payment = models.DecimalField(verbose_name=_("Cash money"), max_digits=10, decimal_places=2, default=0)
     debt_payment = models.DecimalField(verbose_name=_("Debt money"), max_digits=10, decimal_places=2, default=0)
+    phone_number = models.CharField(verbose_name=_("phone number"), max_length=20, null=True, blank=True)
     sold_at = models.DateTimeField(verbose_name=_("sold at"), default=timezone.now)
     reported_by = models.ForeignKey(
         verbose_name=_("Reported by"), to="users.User", on_delete=models.SET_NULL, null=True, blank=True
