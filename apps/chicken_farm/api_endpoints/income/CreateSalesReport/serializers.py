@@ -2,7 +2,6 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
 from apps.chicken_farm.models import FarmResource, FarmSalesReport
-from apps.chicken_farm.utils import bulk_update_daily_reports
 
 
 class CreateSalesReportSerializer(serializers.ModelSerializer):
@@ -29,6 +28,10 @@ class CreateSalesReportSerializer(serializers.ModelSerializer):
         if farm_resource.current_eggs_count < data["sold_egg_boxes"] * 30:
             raise serializers.ValidationError(code="not_enough_eggs", detail=_("There is not enough eggs to sell"))
 
+        # Check if money amount is valid
+        if data["sold_egg_boxes"] * data["price_per_box"] < data["card_payment"] + data["cash_payment"]:
+            raise serializers.ValidationError(code="invalid_money_amount", detail=_("Invalid money amount"))
+
         return data
 
     def create(self, validated_data):
@@ -37,11 +40,7 @@ class CreateSalesReportSerializer(serializers.ModelSerializer):
         obj.debt_payment = obj.total_payment - obj.card_payment - obj.cash_payment
         obj.save()
 
-        from apps.chicken_farm.models import FarmDailyReport
-
-        # get last daily report
-        daily_report = FarmDailyReport.objects.filter(date=obj.sold_at.date()).first()
-        if daily_report:
-            bulk_update_daily_reports(daily_report)
+        # update related daily report
+        obj.apply_to_related_daily_report()
 
         return obj

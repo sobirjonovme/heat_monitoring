@@ -3,6 +3,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from sorl.thumbnail import ImageField
 
+# from apps.chicken_farm.choices import FarmExpenseCategory
 from apps.common.models import TimeStampedModel
 
 
@@ -21,7 +22,12 @@ class FarmExpense(TimeStampedModel):
     type = models.ForeignKey(
         verbose_name=_("type"), to="chicken_farm.FarmExpenseType", on_delete=models.CASCADE, related_name="expenses"
     )
+    # category = models.CharField(
+    #     verbose_name=_("category"), max_length=15, choices=FarmExpenseCategory.choices
+    # )
     item_amount = models.CharField(verbose_name=_("item amount"), max_length=127)
+    # item_amount = models.IntegerField(verbose_name=_("item amount"))
+    # item_unit = models.CharField(verbose_name=_("item unit"), max_length=127)
     card_payment = models.DecimalField(verbose_name=_("Card money"), max_digits=10, decimal_places=2, default=0)
     cash_payment = models.DecimalField(verbose_name=_("Cash money"), max_digits=10, decimal_places=2, default=0)
     debt_payment = models.DecimalField(verbose_name=_("Debt money"), max_digits=10, decimal_places=2, default=0)
