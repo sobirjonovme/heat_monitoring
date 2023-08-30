@@ -13,9 +13,10 @@ class CreateFarmExpenseSerializer(serializers.ModelSerializer):
         model = FarmExpense
         fields = (
             "item_amount",
-            "card_payment",
+            "item_unit" "card_payment",
             "cash_payment",
             "debt_payment",
+            "comment",
             "image",
             # read only fields
             "type",
