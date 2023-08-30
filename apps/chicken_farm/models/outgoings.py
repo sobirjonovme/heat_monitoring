@@ -10,6 +10,7 @@ from apps.common.models import TimeStampedModel
 class FarmExpenseType(TimeStampedModel):
     name = models.CharField(verbose_name=_("name"), max_length=255)
     category = models.CharField(verbose_name=_("category"), max_length=15, choices=FarmExpenseCategory.choices)
+    amount = models.FloatField(verbose_name=_("amount"), default=0)
 
     class Meta:
         verbose_name = _("expense type")
@@ -45,3 +46,22 @@ class FarmExpense(TimeStampedModel):
     @property
     def total_payment(self):
         return self.card_payment + self.cash_payment + self.debt_payment
+
+
+class FarmFodderIngredientUsage(TimeStampedModel):
+    ingredient = models.ForeignKey(
+        verbose_name=_("ingredient"), to="chicken_farm.FarmExpenseType", on_delete=models.CASCADE
+    )
+    amount = models.FloatField(verbose_name=_("amount"))
+    remaining_amount = models.FloatField(verbose_name=_("remaining amount"))
+    date = models.DateField(verbose_name=_("date"), default=timezone.now)
+    reported_by = models.ForeignKey(
+        verbose_name=_("Reported by"), to="users.User", on_delete=models.SET_NULL, null=True, blank=True
+    )
+
+    class Meta:
+        verbose_name = _("fodder ingredient usage")
+        verbose_name_plural = _("fodder ingredients usage")
+
+    def __str__(self):
+        return f"#{self.id} - {self.ingredient.name}"

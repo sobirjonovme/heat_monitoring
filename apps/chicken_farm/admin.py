@@ -3,7 +3,8 @@ from solo.admin import SingletonModelAdmin
 
 from apps.chicken_farm.models import (FarmDailyReport, FarmDebtPayback,
                                       FarmExpense, FarmExpenseType,
-                                      FarmResource, FarmSalesReport)
+                                      FarmFodderIngredientUsage, FarmResource,
+                                      FarmSalesReport)
 from apps.chicken_farm.utils import bulk_update_daily_reports
 
 
@@ -74,6 +75,7 @@ class IncomeDebtPaybackAdmin(admin.ModelAdmin):
         "payment_method",
         "type",
     )
+    autocomplete_fields = ("expense", "sales_report")
     readonly_fields = ("reported_by", "created_at", "updated_at")
 
 
@@ -82,12 +84,15 @@ class ExpenseTypeAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "name",
+        "category",
+        "amount",
     )
     list_display_links = ("id", "name")
     search_fields = (
         "id",
         "name",
     )
+    list_filter = ("category",)
     readonly_fields = ("created_at", "updated_at")
 
 
@@ -96,4 +101,14 @@ class ExpenseAdmin(admin.ModelAdmin):
     list_display = ("id", "type", "card_payment", "cash_payment", "debt_payment", "date")
     list_display_links = ("id", "type", "date")
     search_fields = ("id", "type__name")
+    autocomplete_fields = ("type",)
+    readonly_fields = ("reported_by", "created_at", "updated_at")
+
+
+@admin.register(FarmFodderIngredientUsage)
+class FodderIngredientUsageAdmin(admin.ModelAdmin):
+    list_display = ("id", "ingredient", "amount", "remaining_amount", "date")
+    list_display_links = ("id", "ingredient")
+    search_fields = ("id", "ingredient__name")
+    autocomplete_fields = ("ingredient",)
     readonly_fields = ("reported_by", "created_at", "updated_at")
