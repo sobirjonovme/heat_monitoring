@@ -1,3 +1,4 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
 from rest_framework.generics import ListAPIView
 
@@ -12,7 +13,8 @@ class FarmExpenseTypeListAPIView(ListAPIView):
     permission_classes = (IsFarmCounterOrAdmin,)
 
     pagination_class = None
-    filter_backends = (SearchFilter,)
+    filter_backends = (DjangoFilterBackend, SearchFilter)
+    filterset_fields = ("category",)
     search_fields = ("name",)
 
 
