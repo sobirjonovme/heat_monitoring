@@ -1,11 +1,12 @@
 from django.urls import path
 
 from .api_endpoints import (CreateDailyReportAPIView, CreateDebtPaybackAPIView,
-                            CreateFarmExpenseAPIView, CreateSalesReportAPIView,
-                            DailyReportListAPIView, DebtPaybackListAPIView,
-                            ExpenseTypeStatisticsView, FarmExpenseListAPIView,
-                            FarmExpenseTypeListAPIView, HelperAPIView,
-                            IncomeStatisticsAPIView,
+                            CreateFarmExpenseAPIView,
+                            CreateIngredientUsageAPIView,
+                            CreateSalesReportAPIView, DailyReportListAPIView,
+                            DebtPaybackListAPIView, ExpenseTypeStatisticsView,
+                            FarmExpenseListAPIView, FarmExpenseTypeListAPIView,
+                            HelperAPIView, IncomeStatisticsAPIView,
                             OutgoingsStatisticsAPIView, OverallStatisticsView,
                             SalesReportListAPIView)
 
@@ -20,6 +21,7 @@ urlpatterns = [
     path("sales-report/list/", SalesReportListAPIView.as_view(), name="list-sales-report"),
     # farm expenses
     path("farm-expense/create/", CreateFarmExpenseAPIView.as_view(), name="create-farm-expense"),
+    path("ingredient-usage/create/", CreateIngredientUsageAPIView.as_view(), name="create-ingredient-usage"),
     path("farm-expense/list/", FarmExpenseListAPIView.as_view(), name="list-farm-expense"),
     path("farm-expense-type/list/", FarmExpenseTypeListAPIView.as_view(), name="list-farm-expense-type"),
     # statistics
