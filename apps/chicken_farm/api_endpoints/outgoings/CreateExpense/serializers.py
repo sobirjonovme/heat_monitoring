@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from apps.chicken_farm.choices import FarmExpenseCategory
 from apps.chicken_farm.models import FarmExpense, FarmExpenseType
 from apps.chicken_farm.serializers import FarmExpenseTypeSerializer
 
@@ -24,6 +25,8 @@ class CreateFarmExpenseSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         type_name = validated_data.pop("type_name")
-        expense_type_obj, _ = FarmExpenseType.objects.get_or_create(name=type_name)
+        expense_type_obj, _ = FarmExpenseType.objects.get_or_create(
+            name=type_name, defaults={"category": FarmExpenseCategory.OTHER}
+        )
         farm_expense = FarmExpense.objects.create(type=expense_type_obj, **validated_data)
         return farm_expense

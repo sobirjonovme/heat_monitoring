@@ -6,4 +6,4 @@ from apps.chicken_farm.models import FarmExpenseType
 class FarmExpenseTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = FarmExpenseType
-        fields = ("id", "name")
+        fields = ("id", "name", "category")
