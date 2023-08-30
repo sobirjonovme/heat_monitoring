@@ -13,7 +13,8 @@ class CreateFarmExpenseSerializer(serializers.ModelSerializer):
         model = FarmExpense
         fields = (
             "item_amount",
-            "item_unit" "card_payment",
+            "item_unit",
+            "card_payment",
             "cash_payment",
             "debt_payment",
             "comment",
