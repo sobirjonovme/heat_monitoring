@@ -28,10 +28,17 @@ class CreateFarmExpenseSerializer(serializers.ModelSerializer):
         )
 
     def create(self, validated_data):
+        # get or create expense type
         type_name = validated_data.pop("type_name")
         expense_category = validated_data.pop("expense_category")
         expense_type_obj, _ = FarmExpenseType.objects.get_or_create(
             name=type_name, defaults={"category": expense_category}
         )
+
+        # create farm expense
         farm_expense = FarmExpense.objects.create(type=expense_type_obj, **validated_data)
+
+        # increase expense type amount
+        farm_expense.increase_expense_type_amount()
+
         return farm_expense

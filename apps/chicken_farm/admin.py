@@ -104,6 +104,24 @@ class ExpenseAdmin(admin.ModelAdmin):
     autocomplete_fields = ("type",)
     readonly_fields = ("reported_by", "created_at", "updated_at")
 
+    def has_change_permission(self, request, obj=None):
+        # disable editing
+        return False
+
+    def save_model(self, request, obj, form, change):
+        # if object is created
+        if not obj.id:
+            # increase expense type amount
+            obj.increase_expense_type_amount()
+
+        obj.save()
+
+    def delete_model(self, request, obj):
+        # reduce expense type amount, because its adding record is deleted
+        obj.reduce_expense_type_amount()
+
+        obj.delete()
+
 
 @admin.register(FarmFodderIngredientUsage)
 class FodderIngredientUsageAdmin(admin.ModelAdmin):
@@ -111,4 +129,22 @@ class FodderIngredientUsageAdmin(admin.ModelAdmin):
     list_display_links = ("id", "ingredient")
     search_fields = ("id", "ingredient__name")
     autocomplete_fields = ("ingredient",)
-    readonly_fields = ("reported_by", "created_at", "updated_at")
+    readonly_fields = ("remaining_amount", "reported_by", "created_at", "updated_at")
+
+    def has_change_permission(self, request, obj=None):
+        # disable editing
+        return False
+
+    def save_model(self, request, obj, form, change):
+        # if object is created
+        if not obj.id:
+            # reduce ingredient amount
+            obj.reduce_ingredient_amount()
+
+        obj.save()
+
+    def delete_model(self, request, obj):
+        # increase ingredient amount, because its usage is deleted
+        obj.increase_ingredient_amount()
+
+        obj.delete()

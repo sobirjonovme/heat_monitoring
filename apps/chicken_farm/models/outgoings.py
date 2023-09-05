@@ -47,13 +47,21 @@ class FarmExpense(TimeStampedModel):
     def total_payment(self):
         return self.card_payment + self.cash_payment + self.debt_payment
 
+    def reduce_expense_type_amount(self):
+        self.type.amount -= self.item_amount
+        self.type.save()
+
+    def increase_expense_type_amount(self):
+        self.type.amount += self.item_amount
+        self.type.save()
+
 
 class FarmFodderIngredientUsage(TimeStampedModel):
     ingredient = models.ForeignKey(
         verbose_name=_("ingredient"), to="chicken_farm.FarmExpenseType", on_delete=models.CASCADE
     )
     amount = models.FloatField(verbose_name=_("amount"))
-    remaining_amount = models.FloatField(verbose_name=_("remaining amount"))
+    remaining_amount = models.FloatField(verbose_name=_("remaining amount"), null=True, blank=True)  # not used for now
     date = models.DateField(verbose_name=_("date"), default=timezone.now)
     reported_by = models.ForeignKey(
         verbose_name=_("Reported by"), to="users.User", on_delete=models.SET_NULL, null=True, blank=True
@@ -65,3 +73,11 @@ class FarmFodderIngredientUsage(TimeStampedModel):
 
     def __str__(self):
         return f"#{self.id} - {self.ingredient.name}"
+
+    def reduce_ingredient_amount(self):
+        self.ingredient.amount -= self.amount
+        self.ingredient.save()
+
+    def increase_ingredient_amount(self):
+        self.ingredient.amount += self.amount
+        self.ingredient.save()
