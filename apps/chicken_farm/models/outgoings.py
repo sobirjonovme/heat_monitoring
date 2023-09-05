@@ -8,9 +8,10 @@ from apps.common.models import TimeStampedModel
 
 
 class FarmExpenseType(TimeStampedModel):
-    name = models.CharField(verbose_name=_("name"), max_length=255)
     category = models.CharField(verbose_name=_("category"), max_length=15, choices=FarmExpenseCategory.choices)
-    amount = models.FloatField(verbose_name=_("amount"), default=0)
+    name = models.CharField(verbose_name=_("name"), max_length=255)
+    remaining_amount = models.FloatField(verbose_name=_("remaining amount"), default=0)
+    item_unit = models.CharField(verbose_name=_("item unit"), max_length=127)
 
     class Meta:
         verbose_name = _("expense type")
@@ -25,7 +26,6 @@ class FarmExpense(TimeStampedModel):
         verbose_name=_("type"), to="chicken_farm.FarmExpenseType", on_delete=models.CASCADE, related_name="expenses"
     )
     item_amount = models.FloatField(verbose_name=_("item amount"))
-    item_unit = models.CharField(verbose_name=_("item unit"), max_length=127)
     card_payment = models.DecimalField(verbose_name=_("Card money"), max_digits=10, decimal_places=2, default=0)
     cash_payment = models.DecimalField(verbose_name=_("Cash money"), max_digits=10, decimal_places=2, default=0)
     debt_payment = models.DecimalField(verbose_name=_("Debt money"), max_digits=10, decimal_places=2, default=0)
@@ -48,11 +48,11 @@ class FarmExpense(TimeStampedModel):
         return self.card_payment + self.cash_payment + self.debt_payment
 
     def reduce_expense_type_amount(self):
-        self.type.amount -= self.item_amount
+        self.type.remaining_amount -= self.item_amount
         self.type.save()
 
     def increase_expense_type_amount(self):
-        self.type.amount += self.item_amount
+        self.type.remaining_amount += self.item_amount
         self.type.save()
 
 
@@ -75,9 +75,9 @@ class FarmFodderIngredientUsage(TimeStampedModel):
         return f"#{self.id} - {self.ingredient.name}"
 
     def reduce_ingredient_amount(self):
-        self.ingredient.amount -= self.amount
+        self.ingredient.remaining_amount -= self.amount
         self.ingredient.save()
 
     def increase_ingredient_amount(self):
-        self.ingredient.amount += self.amount
+        self.ingredient.remaining_amount += self.amount
         self.ingredient.save()

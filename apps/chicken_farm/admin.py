@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.translation import gettext_lazy as _
 from solo.admin import SingletonModelAdmin
 
 from apps.chicken_farm.models import (FarmDailyReport, FarmDebtPayback,
@@ -85,7 +86,8 @@ class ExpenseTypeAdmin(admin.ModelAdmin):
         "id",
         "name",
         "category",
-        "amount",
+        "remaining_amount",
+        "item_unit",
     )
     list_display_links = ("id", "name")
     search_fields = (
@@ -98,11 +100,16 @@ class ExpenseTypeAdmin(admin.ModelAdmin):
 
 @admin.register(FarmExpense)
 class ExpenseAdmin(admin.ModelAdmin):
-    list_display = ("id", "type", "card_payment", "cash_payment", "debt_payment", "date")
+    list_display = ("id", "type", "amount_purchased", "card_payment", "cash_payment", "debt_payment", "date")
     list_display_links = ("id", "type", "date")
     search_fields = ("id", "type__name")
     autocomplete_fields = ("type",)
     readonly_fields = ("reported_by", "created_at", "updated_at")
+
+    def amount_purchased(self, obj):
+        return f"{obj.item_amount} {obj.type.item_unit}"
+
+    amount_purchased.short_description = _("Amount")  # type: ignore
 
     def has_change_permission(self, request, obj=None):
         # disable editing
@@ -125,7 +132,7 @@ class ExpenseAdmin(admin.ModelAdmin):
 
 @admin.register(FarmFodderIngredientUsage)
 class FodderIngredientUsageAdmin(admin.ModelAdmin):
-    list_display = ("id", "ingredient", "amount", "remaining_amount", "date")
+    list_display = ("id", "ingredient", "amount", "date")
     list_display_links = ("id", "ingredient")
     search_fields = ("id", "ingredient__name")
     autocomplete_fields = ("ingredient",)

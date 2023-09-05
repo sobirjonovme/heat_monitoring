@@ -8,4 +8,4 @@ class ExpenseTypeStatisticsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FarmExpenseType
-        fields = ("id", "name", "total_expenses")
+        fields = ("id", "name", "item_unit", "total_expenses")
