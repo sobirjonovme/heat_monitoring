@@ -9,12 +9,16 @@ from .serializers import FarmExpenseListSerializer
 
 
 class FarmExpenseListAPIView(ListAPIView):
-    queryset = FarmExpense.objects.all().order_by("-date")
     serializer_class = FarmExpenseListSerializer
     permission_classes = (IsFarmCounterOrAdmin,)
 
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = FarmExpenseFilter
+
+    def get_queryset(self):
+        queryset = FarmExpense.objects.all().order_by("-date")
+        queryset = queryset.select_related("type")
+        return queryset
 
 
 __all__ = ["FarmExpenseListAPIView"]
