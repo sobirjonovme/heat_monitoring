@@ -6,6 +6,7 @@ from .api_endpoints import (CreateDailyReportAPIView, CreateDebtPaybackAPIView,
                             CreateSalesReportAPIView, DailyReportListAPIView,
                             DebtPaybackListAPIView, ExpenseTypeStatisticsView,
                             FarmExpenseListAPIView, FarmExpenseTypeListAPIView,
+                            FarmFodderIngredientUsageListAPIView,
                             HelperAPIView, IncomeStatisticsAPIView,
                             OutgoingsStatisticsAPIView, OverallStatisticsView,
                             SalesReportListAPIView)
@@ -22,6 +23,7 @@ urlpatterns = [
     # farm expenses
     path("farm-expense/create/", CreateFarmExpenseAPIView.as_view(), name="create-farm-expense"),
     path("ingredient-usage/create/", CreateIngredientUsageAPIView.as_view(), name="create-ingredient-usage"),
+    path("ingredient-usage/list/", FarmFodderIngredientUsageListAPIView.as_view(), name="list-ingredient-usage"),
     path("farm-expense/list/", FarmExpenseListAPIView.as_view(), name="list-farm-expense"),
     path("farm-expense-type/list/", FarmExpenseTypeListAPIView.as_view(), name="list-farm-expense-type"),
     # statistics
