@@ -26,9 +26,9 @@ class FarmExpense(TimeStampedModel):
         verbose_name=_("type"), to="chicken_farm.FarmExpenseType", on_delete=models.CASCADE, related_name="expenses"
     )
     item_amount = models.FloatField(verbose_name=_("item amount"))
-    card_payment = models.DecimalField(verbose_name=_("Card money"), max_digits=10, decimal_places=2, default=0)
-    cash_payment = models.DecimalField(verbose_name=_("Cash money"), max_digits=10, decimal_places=2, default=0)
-    debt_payment = models.DecimalField(verbose_name=_("Debt money"), max_digits=10, decimal_places=2, default=0)
+    card_payment = models.DecimalField(verbose_name=_("Card money"), max_digits=12, decimal_places=2, default=0)
+    cash_payment = models.DecimalField(verbose_name=_("Cash money"), max_digits=12, decimal_places=2, default=0)
+    debt_payment = models.DecimalField(verbose_name=_("Debt money"), max_digits=12, decimal_places=2, default=0)
     comment = models.TextField(verbose_name=_("comment"), null=True, blank=True)
     image = ImageField(verbose_name=_("image"), upload_to="expenses/%Y/%m/%d/", null=True, blank=True)
     date = models.DateField(verbose_name=_("date"), default=timezone.now)

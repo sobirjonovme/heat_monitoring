@@ -54,7 +54,7 @@ class FarmDebtPayback(TimeStampedModel):
         blank=True,
     )
     type = models.CharField(verbose_name=_("Type"), max_length=15, choices=FarmDebtPaybackType.choices)
-    amount = models.DecimalField(verbose_name=_("Money amount"), max_digits=10, decimal_places=2, default=0)
+    amount = models.DecimalField(verbose_name=_("Money amount"), max_digits=12, decimal_places=2, default=0)
     payment_method = models.CharField(
         verbose_name=_("Payment method"), max_length=15, choices=DebtPaybackMethod.choices
     )

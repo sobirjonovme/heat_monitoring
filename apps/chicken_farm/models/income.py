@@ -101,9 +101,9 @@ class FarmSalesReport(TimeStampedModel):
     )
     price_per_box = models.PositiveIntegerField(verbose_name=_("price per box"))
     comment = models.TextField(verbose_name=_("comment"), null=True, blank=True)
-    card_payment = models.DecimalField(verbose_name=_("Card money"), max_digits=10, decimal_places=2, default=0)
-    cash_payment = models.DecimalField(verbose_name=_("Cash money"), max_digits=10, decimal_places=2, default=0)
-    debt_payment = models.DecimalField(verbose_name=_("Debt money"), max_digits=10, decimal_places=2, default=0)
+    card_payment = models.DecimalField(verbose_name=_("Card money"), max_digits=12, decimal_places=2, default=0)
+    cash_payment = models.DecimalField(verbose_name=_("Cash money"), max_digits=12, decimal_places=2, default=0)
+    debt_payment = models.DecimalField(verbose_name=_("Debt money"), max_digits=12, decimal_places=2, default=0)
     phone_number = models.CharField(verbose_name=_("phone number"), max_length=20, null=True, blank=True)
     sold_at = models.DateTimeField(verbose_name=_("sold at"), default=timezone.now)
     reported_by = models.ForeignKey(
