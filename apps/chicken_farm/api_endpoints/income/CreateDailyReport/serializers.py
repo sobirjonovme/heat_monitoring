@@ -8,7 +8,7 @@ from apps.chicken_farm.utils import bulk_update_daily_reports
 class CreateDailyReportSerializer(serializers.ModelSerializer):
     class Meta:
         model = FarmDailyReport
-        fields = ("laid_eggs", "broken_eggs", "dead_chickens")
+        fields = ("laid_eggs", "broken_eggs", "dead_chickens", "date",)
 
     def validate(self, data):
         farm_resource = FarmResource.get_solo()
