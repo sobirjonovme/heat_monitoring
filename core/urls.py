@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.contrib.auth.models import Group
 from django.urls import include, path
 
-from .schema import swagger_urlpatterns
+from core.swagger.schema import swagger_urlpatterns
 
 urlpatterns = [
     path("admin/", admin.site.urls),
